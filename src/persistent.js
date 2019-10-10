@@ -1,5 +1,5 @@
 import deepExtend from 'deep-extend';
-import { get, save, config } from './Storage';
+import { get, save } from './Storage';
 
 function value(val, ...args) {
     return typeof val === 'function' ? val(...args) : val;
@@ -16,7 +16,7 @@ function promise(val, ...args) {
 }
 
 // TODO: Create a file for an encryption when app first launches...
-export default options => {
+export default (options = {}) => {
     const key = options.key || 'config';
 
     const DEFAULT_DRIVER = vuex => ({

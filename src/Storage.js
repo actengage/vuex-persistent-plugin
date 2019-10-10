@@ -6,8 +6,6 @@ export function db(name, options) {
     return new PouchDB(name, options);
 }
 
-const global = db(process.env.VUE_APP_DB_NAME || 'capsule');
-
 export function execute(method, key, ...args) {
     if(Array.isArray(key)) {
         const promises = key.map(key => method(key).then(data => {
@@ -238,5 +236,7 @@ export function cache(key, data, length = null) {
         }, reject);
     });
 }
+
+const global = db(process.env.VUE_APP_DB_NAME || 'capsule');
 
 export default global;

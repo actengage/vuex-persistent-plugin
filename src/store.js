@@ -14,9 +14,7 @@ export default new Vuex.Store({
     },
 
     plugins: [
-        persistent({
-            
-        })
+        persistent()
     ],
 
     mutations: {
