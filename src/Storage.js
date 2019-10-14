@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
+import PouchFind from 'pouchdb-find';
 
-PouchDB.plugin(require('pouchdb-find').default);
+PouchDB.plugin(PouchFind);
 
 export function db(name, options) {
     return new PouchDB(name, options);
@@ -74,13 +75,8 @@ export function findFirstKey(key, ...args) {
 
 export function firstOrFail(key, ...args) {
     return new Promise((resolve, reject) => {
-        findFirstKey(key, ...args).then(doc => {
-            if(doc) {
-                resolve(doc);
-            }
-            else {
-                global.get(key, ...args).then(resolve, reject);
-            }
+        findFirstKey(key).then(doc => {
+            execute(global.get, doc ? doc._id : key, ...args).then(resolve, reject);
         });
     });
 }
@@ -111,7 +107,7 @@ export function get(key, ...args) {
 
 export function post(doc, ...args) {
     doc = JSON.parse(JSON.stringify(doc));
-
+    
     return new Promise((resolve, reject) => {
         execute(global.post, doc, ...args).then(({ id }) => {
             get(id).then(resolve, reject);
@@ -125,17 +121,9 @@ export function put(doc, ...args) {
     doc = JSON.parse(JSON.stringify(doc));
 
     return new Promise((resolve, reject) => {
-        find({ selector: { _id }}).then(({ docs }) => {
-            if(docs.length === 1) {
-                const { _rev } = docs.pop();
-
-                Object.assign(doc, { _rev });
-            }
-
-            execute(global.put, doc, ...args).then(({ id }) => {
-                get(id).then(resolve, reject);
-            }, reject);
-        });
+        get(_id).then(({ _rev }) => {
+            execute(global.put, Object.assign(doc, { _rev })).then(() => resolve(doc), reject);
+        }, reject);
     });
 }
 
@@ -163,9 +151,59 @@ export function save(doc, data, ...args) {
     if(typeof doc === 'string') {
         doc = Object.assign({_id: doc}, data);
     }
-    
-    return !doc._id ? post(doc) : put(doc);
+
+    if(!doc._id) {
+        return post(doc);
+    }
+
+    return new Promise((resolve, reject) => {
+        retryUntilSucceeds(() => {
+            return get(doc._id).then(({ _rev }) => {
+                return put(Object.assign(doc, { _rev }));
+            }, () => {
+                return post(doc);
+            });
+        }).then(resolve, reject);
+    });
 }
+
+/*
+export function retryUntilWritten(name, saveData, options, fn) {
+    if(options instanceof Function) {
+        fn = options;
+    }
+
+    if(typeof options !== 'object') {
+        options = {};
+    }
+
+    if(!saveData._id && saveData.id) {
+        saveData._id = saveData.id.toString();
+    }
+
+    function write(data) {
+        return db(name).put(saveData).catch(err => {
+            if (err.status === 409) {
+                return retryUntilWritten(name, saveData, options, fn);
+            }
+            else {
+                return db(name).put(saveData);
+            }
+        });
+    }
+
+    return db(name)
+        .get(saveData._id, options)
+        .then(currentDoc => {
+            saveData._rev = currentDoc._rev;
+            saveData = fn instanceof Function ? fn(saveData, currentDoc) : saveData;
+
+            return write(saveData);
+        }, e => {
+            return write(saveData);
+        });
+}
+*/
 
 export function findCacheSelector(key) {
     return {
@@ -181,6 +219,16 @@ export function findCacheSelector(key) {
 
 export function purge(key, ...args) {
     return remove(key, ...args);
+}
+
+export function retryUntilSucceeds(method, ...args) {
+    return promise(method(...args)).catch(e => {
+        if(e.status === 409) {
+            return retryUntilSucceeds(method, ...args);
+        }
+
+        throw e;
+    });
 }
 
 export function clearExpiredAt(key) {
@@ -201,7 +249,9 @@ export function clearExpiredAt(key) {
                 }]
             }
         }).then(({ docs }) => {
-            Promise.all(docs.map(doc => remove(doc))).then(resolve, reject);
+            Promise.all(docs.map(doc => {
+                return retryUntilSucceeds(remove, doc);
+            })).then(resolve, reject);
         }, reject);
     });
 }
