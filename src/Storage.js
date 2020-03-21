@@ -11,7 +11,7 @@ export function execute(method, key, ...args) {
     if(Array.isArray(key)) {
         const promises = key.map(key => method(key).then(data => {
             return [key, data];
-        }, e => {
+        }, () => {
             return [key, undefined];
         }));
 
@@ -144,7 +144,7 @@ export function save(doc, data, ...args) {
         return execute(save, doc, data, ...args);    
     }
 
-    if(!Object.keys(data).length || !isJson(doc) && !isJson(data)) {
+    if(!isJson(doc) && !isJson(data) || typeof data === 'object' && !Object.keys(data).length) {
         return config(doc, data, ...args);
     }
     

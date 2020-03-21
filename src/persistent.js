@@ -43,7 +43,7 @@ export default (options = {}) => {
             });
         },
         resetStateToDefault() {
-            console.log('reset');
+            //
         }
     });
     
