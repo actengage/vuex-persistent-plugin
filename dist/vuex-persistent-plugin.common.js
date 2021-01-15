@@ -87,167 +87,40 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
-/***/ "047f":
+/***/ 0:
 /***/ (function(module, exports) {
 
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      ctor.prototype = Object.create(superCtor.prototype, {
-        constructor: {
-          value: ctor,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      })
-    }
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      var TempCtor = function () {}
-      TempCtor.prototype = superCtor.prototype
-      ctor.prototype = new TempCtor()
-      ctor.prototype.constructor = ctor
-    }
-  }
-}
-
+/* (ignored) */
 
 /***/ }),
 
-/***/ "0f86":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "06a1":
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* unused harmony export atob */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return thisBtoa; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return b64ToBluffer; });
-/* unused harmony export binaryStringToArrayBuffer */
-/* unused harmony export binaryStringToBlobOrBuffer */
-/* unused harmony export blob */
-/* unused harmony export blobOrBufferToBase64 */
-/* unused harmony export blobOrBufferToBinaryString */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return readAsArrayBuffer; });
-/* unused harmony export readAsBinaryString */
-/* unused harmony export typedBuffer */
-var thisAtob = function (str) {
-  return atob(str);
+/* WEBPACK VAR INJECTION */(function(global) {
+//based off rsvp https://github.com/tildeio/rsvp.js
+//license https://github.com/tildeio/rsvp.js/blob/master/LICENSE
+//https://github.com/tildeio/rsvp.js/blob/master/lib/rsvp/asap.js
+
+var Mutation = global.MutationObserver || global.WebKitMutationObserver;
+
+exports.test = function () {
+  return Mutation;
 };
 
-var thisBtoa = function (str) {
-  return btoa(str);
+exports.install = function (handle) {
+  var called = 0;
+  var observer = new Mutation(handle);
+  var element = global.document.createTextNode('');
+  observer.observe(element, {
+    characterData: true
+  });
+  return function () {
+    element.data = (called = ++called % 2);
+  };
 };
-
-// Abstracts constructing a Blob object, so it also works in older
-// browsers that don't support the native Blob constructor (e.g.
-// old QtWebKit versions, Android < 4.4).
-function createBlob(parts, properties) {
-  /* global BlobBuilder,MSBlobBuilder,MozBlobBuilder,WebKitBlobBuilder */
-  parts = parts || [];
-  properties = properties || {};
-  try {
-    return new Blob(parts, properties);
-  } catch (e) {
-    if (e.name !== "TypeError") {
-      throw e;
-    }
-    var Builder = typeof BlobBuilder !== 'undefined' ? BlobBuilder :
-                  typeof MSBlobBuilder !== 'undefined' ? MSBlobBuilder :
-                  typeof MozBlobBuilder !== 'undefined' ? MozBlobBuilder :
-                  WebKitBlobBuilder;
-    var builder = new Builder();
-    for (var i = 0; i < parts.length; i += 1) {
-      builder.append(parts[i]);
-    }
-    return builder.getBlob(properties.type);
-  }
-}
-
-// From http://stackoverflow.com/questions/14967647/ (continues on next line)
-// encode-decode-image-with-base64-breaks-image (2013-04-21)
-function binaryStringToArrayBuffer(bin) {
-  var length = bin.length;
-  var buf = new ArrayBuffer(length);
-  var arr = new Uint8Array(buf);
-  for (var i = 0; i < length; i++) {
-    arr[i] = bin.charCodeAt(i);
-  }
-  return buf;
-}
-
-function binStringToBluffer(binString, type) {
-  return createBlob([binaryStringToArrayBuffer(binString)], {type: type});
-}
-
-function b64ToBluffer(b64, type) {
-  return binStringToBluffer(thisAtob(b64), type);
-}
-
-//Can't find original post, but this is close
-//http://stackoverflow.com/questions/6965107/ (continues on next line)
-//converting-between-strings-and-arraybuffers
-function arrayBufferToBinaryString(buffer) {
-  var binary = '';
-  var bytes = new Uint8Array(buffer);
-  var length = bytes.byteLength;
-  for (var i = 0; i < length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return binary;
-}
-
-// shim for browsers that don't support it
-function readAsBinaryString(blob, callback) {
-  var reader = new FileReader();
-  var hasBinaryString = typeof reader.readAsBinaryString === 'function';
-  reader.onloadend = function (e) {
-    var result = e.target.result || '';
-    if (hasBinaryString) {
-      return callback(result);
-    }
-    callback(arrayBufferToBinaryString(result));
-  };
-  if (hasBinaryString) {
-    reader.readAsBinaryString(blob);
-  } else {
-    reader.readAsArrayBuffer(blob);
-  }
-}
-
-function blobToBinaryString(blobOrBuffer, callback) {
-  readAsBinaryString(blobOrBuffer, function (bin) {
-    callback(bin);
-  });
-}
-
-function blobToBase64(blobOrBuffer, callback) {
-  blobToBinaryString(blobOrBuffer, function (base64) {
-    callback(thisBtoa(base64));
-  });
-}
-
-// simplified API. universal browser support is assumed
-function readAsArrayBuffer(blob, callback) {
-  var reader = new FileReader();
-  reader.onloadend = function (e) {
-    var result = e.target.result || new ArrayBuffer(0);
-    callback(result);
-  };
-  reader.readAsArrayBuffer(blob);
-}
-
-// this is not used in the browser
-function typedBuffer() {
-}
-
-
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
 
 /***/ }),
 
@@ -255,17 +128,16 @@ function typedBuffer() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global, process) {/* harmony import */ var immediate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("de3d");
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var immediate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("714a");
 /* harmony import */ var immediate__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(immediate__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("78f5");
-/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(uuid__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ec26");
 /* harmony import */ var spark_md5__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("69a0");
 /* harmony import */ var spark_md5__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(spark_md5__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var vuvuzela__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6f28");
 /* harmony import */ var vuvuzela__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuvuzela__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var argsarray__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("dd8f");
 /* harmony import */ var argsarray__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(argsarray__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("047f");
+/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3fb5");
 /* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("faa1");
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_6__);
@@ -725,7 +597,7 @@ function hasLocalStorage() {
 
 // Custom nextTick() shim for browsers. In node, this will just be process.nextTick(). We
 
-inherits__WEBPACK_IMPORTED_MODULE_5___default()(Changes, events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(Changes, events__WEBPACK_IMPORTED_MODULE_6___default.a);
 
 /* istanbul ignore next */
 function attachBrowserEvents(self) {
@@ -737,7 +609,7 @@ function attachBrowserEvents(self) {
 }
 
 function Changes() {
-  events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].call(this);
+  events__WEBPACK_IMPORTED_MODULE_6___default.a.call(this);
   this._listeners = {};
 
   attachBrowserEvents(this);
@@ -790,7 +662,7 @@ Changes.prototype.removeListener = function (dbName, id) {
   if (!(id in this._listeners)) {
     return;
   }
-  events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].prototype.removeListener.call(this, dbName,
+  events__WEBPACK_IMPORTED_MODULE_6___default.a.prototype.removeListener.call(this, dbName,
     this._listeners[id]);
   delete this._listeners[id];
 };
@@ -930,9 +802,10 @@ function createError(error, reason) {
     // inherit error properties from our parent error manually
     // so as to allow proper JSON parsing.
     /* jshint ignore:start */
-    for (var p in error) {
-      if (typeof error[p] !== 'function') {
-        this[p] = error[p];
+    var names = Object.getOwnPropertyNames(error);
+    for (var i = 0, len = names.length; i < len; i++) {
+      if (typeof error[names[i]] !== 'function') {
+        this[names[i]] = error[names[i]];
       }
     }
     /* jshint ignore:end */
@@ -1065,7 +938,7 @@ function isRemote(db) {
 
 function listenerCount(ee, type) {
   return 'listenerCount' in ee ? ee.listenerCount(type) :
-                                 events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].listenerCount(ee, type);
+                                 events__WEBPACK_IMPORTED_MODULE_6___default.a.listenerCount(ee, type);
 }
 
 function parseDesignDocFunctionName(s) {
@@ -1294,7 +1167,7 @@ function readAsArrayBuffer(blob, callback) {
 
 // this is not used in the browser
 
-var setImmediateShim = global.setImmediate || global.setTimeout;
+var setImmediateShim = self.setImmediate || self.setTimeout;
 var MD5_CHUNK_SIZE = 32768;
 
 function rawToBase64(raw) {
@@ -1369,14 +1242,14 @@ function stringMd5(string) {
 function rev(doc, deterministic_revs) {
   var clonedDoc = clone(doc);
   if (!deterministic_revs) {
-    return uuid__WEBPACK_IMPORTED_MODULE_1___default.a.v4().replace(/-/g, '').toLowerCase();
+    return Object(uuid__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])().replace(/-/g, '').toLowerCase();
   }
 
   delete clonedDoc._rev_tree;
   return stringMd5(JSON.stringify(clonedDoc));
 }
 
-var uuid = uuid__WEBPACK_IMPORTED_MODULE_1___default.a.v4;
+var uuid = uuid__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"]; // mimic old import, only v4 is ever used elsewhere
 
 // We fetch all leafs of the revision tree, and sort them based on tree length
 // and whether they were deleted, undeleted documents with the longest revision
@@ -1829,7 +1702,7 @@ function latest(rev, metadata) {
   throw new Error('Unable to resolve latest revision for id ' + metadata.id + ', rev ' + rev);
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_5___default()(Changes$1, events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(Changes$1, events__WEBPACK_IMPORTED_MODULE_6___default.a);
 
 function tryCatchInChangeListener(self, change, pending, lastSeq) {
   // isolate try/catches to avoid V8 deoptimizations
@@ -1841,7 +1714,7 @@ function tryCatchInChangeListener(self, change, pending, lastSeq) {
 }
 
 function Changes$1(db, opts, callback) {
-  events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].call(this);
+  events__WEBPACK_IMPORTED_MODULE_6___default.a.call(this);
   var self = this;
   this.db = db;
   opts = opts ? clone(opts) : {};
@@ -2150,10 +2023,10 @@ function attachmentNameError(name) {
   return false;
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_5___default()(AbstractPouchDB, events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(AbstractPouchDB, events__WEBPACK_IMPORTED_MODULE_6___default.a);
 
 function AbstractPouchDB() {
-  events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].call(this);
+  events__WEBPACK_IMPORTED_MODULE_6___default.a.call(this);
 
   // re-bind prototyped methods
   for (var p in AbstractPouchDB.prototype) {
@@ -3141,11 +3014,11 @@ PouchDB.preferredAdapters = [];
 
 PouchDB.prefix = '_pouch_';
 
-var eventEmitter = new events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]();
+var eventEmitter = new events__WEBPACK_IMPORTED_MODULE_6___default.a();
 
 function setUpEventEmitter(Pouch) {
-  Object.keys(events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].prototype).forEach(function (key) {
-    if (typeof events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].prototype[key] === 'function') {
+  Object.keys(events__WEBPACK_IMPORTED_MODULE_6___default.a.prototype).forEach(function (key) {
+    if (typeof events__WEBPACK_IMPORTED_MODULE_6___default.a.prototype[key] === 'function') {
       Pouch[key] = eventEmitter[key].bind(eventEmitter);
     }
   });
@@ -3259,7 +3132,7 @@ PouchDB.fetch = function (url, opts) {
 };
 
 // managed automatically by set-version.js
-var version = "7.2.1";
+var version = "7.2.2";
 
 // this would just be "return doc[field]", but fields
 // can be "deep" due to dot notation
@@ -10211,9 +10084,9 @@ function replicate(src, target, opts, returnValue, result) {
 
 // We create a basic promise so the caller can cancel the replication possibly
 // before we have actually started listening to changes etc
-inherits__WEBPACK_IMPORTED_MODULE_5___default()(Replication, events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(Replication, events__WEBPACK_IMPORTED_MODULE_6___default.a);
 function Replication() {
-  events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"].call(this);
+  events__WEBPACK_IMPORTED_MODULE_6___default.a.call(this);
   this.cancelled = false;
   this.state = 'pending';
   var self = this;
@@ -10294,7 +10167,7 @@ function replicateWrapper(src, target, opts, callback) {
   return replicateRet;
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_5___default()(Sync, events__WEBPACK_IMPORTED_MODULE_6__["EventEmitter"]);
+inherits__WEBPACK_IMPORTED_MODULE_5___default()(Sync, events__WEBPACK_IMPORTED_MODULE_6___default.a);
 function sync(src, target, opts, callback) {
   if (typeof opts === 'function') {
     callback = opts;
@@ -10538,1799 +10411,11 @@ PouchDB.plugin(IDBPouch)
 
 /* harmony default export */ __webpack_exports__["a"] = (PouchDB);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba"), __webpack_require__("4362")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("4362")))
 
 /***/ }),
 
-/***/ "1827":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* unused harmony export binaryMd5 */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return stringMd5; });
-/* harmony import */ var pouchdb_binary_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0f86");
-/* harmony import */ var spark_md5__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("69a0");
-/* harmony import */ var spark_md5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(spark_md5__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-var setImmediateShim = global.setImmediate || global.setTimeout;
-var MD5_CHUNK_SIZE = 32768;
-
-function rawToBase64(raw) {
-  return Object(pouchdb_binary_utils__WEBPACK_IMPORTED_MODULE_0__[/* btoa */ "b"])(raw);
-}
-
-function sliceBlob(blob, start, end) {
-  if (blob.webkitSlice) {
-    return blob.webkitSlice(start, end);
-  }
-  return blob.slice(start, end);
-}
-
-function appendBlob(buffer, blob, start, end, callback) {
-  if (start > 0 || end < blob.size) {
-    // only slice blob if we really need to
-    blob = sliceBlob(blob, start, end);
-  }
-  Object(pouchdb_binary_utils__WEBPACK_IMPORTED_MODULE_0__[/* readAsArrayBuffer */ "c"])(blob, function (arrayBuffer) {
-    buffer.append(arrayBuffer);
-    callback();
-  });
-}
-
-function appendString(buffer, string, start, end, callback) {
-  if (start > 0 || end < string.length) {
-    // only create a substring if we really need to
-    string = string.substring(start, end);
-  }
-  buffer.appendBinary(string);
-  callback();
-}
-
-function binaryMd5(data, callback) {
-  var inputIsString = typeof data === 'string';
-  var len = inputIsString ? data.length : data.size;
-  var chunkSize = Math.min(MD5_CHUNK_SIZE, len);
-  var chunks = Math.ceil(len / chunkSize);
-  var currentChunk = 0;
-  var buffer = inputIsString ? new spark_md5__WEBPACK_IMPORTED_MODULE_1___default.a() : new spark_md5__WEBPACK_IMPORTED_MODULE_1___default.a.ArrayBuffer();
-
-  var append = inputIsString ? appendString : appendBlob;
-
-  function next() {
-    setImmediateShim(loadNextChunk);
-  }
-
-  function done() {
-    var raw = buffer.end(true);
-    var base64 = rawToBase64(raw);
-    callback(base64);
-    buffer.destroy();
-  }
-
-  function loadNextChunk() {
-    var start = currentChunk * chunkSize;
-    var end = start + chunkSize;
-    currentChunk++;
-    if (currentChunk < chunks) {
-      append(buffer, data, start, end, next);
-    } else {
-      append(buffer, data, start, end, done);
-    }
-  }
-  loadNextChunk();
-}
-
-function stringMd5(string) {
-  return spark_md5__WEBPACK_IMPORTED_MODULE_1___default.a.hash(string);
-}
-
-
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
-
-/***/ }),
-
-/***/ "1fb5":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.byteLength = byteLength
-exports.toByteArray = toByteArray
-exports.fromByteArray = fromByteArray
-
-var lookup = []
-var revLookup = []
-var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
-
-var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-for (var i = 0, len = code.length; i < len; ++i) {
-  lookup[i] = code[i]
-  revLookup[code.charCodeAt(i)] = i
-}
-
-// Support decoding URL-safe base64 strings, as Node.js does.
-// See: https://en.wikipedia.org/wiki/Base64#URL_applications
-revLookup['-'.charCodeAt(0)] = 62
-revLookup['_'.charCodeAt(0)] = 63
-
-function getLens (b64) {
-  var len = b64.length
-
-  if (len % 4 > 0) {
-    throw new Error('Invalid string. Length must be a multiple of 4')
-  }
-
-  // Trim off extra bytes after placeholder bytes are found
-  // See: https://github.com/beatgammit/base64-js/issues/42
-  var validLen = b64.indexOf('=')
-  if (validLen === -1) validLen = len
-
-  var placeHoldersLen = validLen === len
-    ? 0
-    : 4 - (validLen % 4)
-
-  return [validLen, placeHoldersLen]
-}
-
-// base64 is 4/3 + up to two characters of the original data
-function byteLength (b64) {
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
-}
-
-function _byteLength (b64, validLen, placeHoldersLen) {
-  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
-}
-
-function toByteArray (b64) {
-  var tmp
-  var lens = getLens(b64)
-  var validLen = lens[0]
-  var placeHoldersLen = lens[1]
-
-  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
-
-  var curByte = 0
-
-  // if there are placeholders, only get up to the last complete 4 chars
-  var len = placeHoldersLen > 0
-    ? validLen - 4
-    : validLen
-
-  var i
-  for (i = 0; i < len; i += 4) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 18) |
-      (revLookup[b64.charCodeAt(i + 1)] << 12) |
-      (revLookup[b64.charCodeAt(i + 2)] << 6) |
-      revLookup[b64.charCodeAt(i + 3)]
-    arr[curByte++] = (tmp >> 16) & 0xFF
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  if (placeHoldersLen === 2) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 2) |
-      (revLookup[b64.charCodeAt(i + 1)] >> 4)
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  if (placeHoldersLen === 1) {
-    tmp =
-      (revLookup[b64.charCodeAt(i)] << 10) |
-      (revLookup[b64.charCodeAt(i + 1)] << 4) |
-      (revLookup[b64.charCodeAt(i + 2)] >> 2)
-    arr[curByte++] = (tmp >> 8) & 0xFF
-    arr[curByte++] = tmp & 0xFF
-  }
-
-  return arr
-}
-
-function tripletToBase64 (num) {
-  return lookup[num >> 18 & 0x3F] +
-    lookup[num >> 12 & 0x3F] +
-    lookup[num >> 6 & 0x3F] +
-    lookup[num & 0x3F]
-}
-
-function encodeChunk (uint8, start, end) {
-  var tmp
-  var output = []
-  for (var i = start; i < end; i += 3) {
-    tmp =
-      ((uint8[i] << 16) & 0xFF0000) +
-      ((uint8[i + 1] << 8) & 0xFF00) +
-      (uint8[i + 2] & 0xFF)
-    output.push(tripletToBase64(tmp))
-  }
-  return output.join('')
-}
-
-function fromByteArray (uint8) {
-  var tmp
-  var len = uint8.length
-  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
-  var parts = []
-  var maxChunkLength = 16383 // must be multiple of 3
-
-  // go through the array every three bytes, we'll deal with trailing stuff later
-  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
-  }
-
-  // pad the end with zeros, but make sure to not forget the extra bytes
-  if (extraBytes === 1) {
-    tmp = uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 2] +
-      lookup[(tmp << 4) & 0x3F] +
-      '=='
-    )
-  } else if (extraBytes === 2) {
-    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
-    parts.push(
-      lookup[tmp >> 10] +
-      lookup[(tmp >> 4) & 0x3F] +
-      lookup[(tmp << 2) & 0x3F] +
-      '='
-    )
-  }
-
-  return parts.join('')
-}
-
-
-/***/ }),
-
-/***/ "28fa":
-/***/ (function(module, exports) {
-
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
-    }
-
-    return rnds;
-  };
-}
-
-
-/***/ }),
-
-/***/ "383b":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Buffer) {/*!
- * @description Recursive object extending
- * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>
- * @license MIT
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013-2018 Viacheslav Lotsmanov
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
-
-
-function isSpecificValue(val) {
-	return (
-		val instanceof Buffer
-		|| val instanceof Date
-		|| val instanceof RegExp
-	) ? true : false;
-}
-
-function cloneSpecificValue(val) {
-	if (val instanceof Buffer) {
-		var x = Buffer.alloc
-			? Buffer.alloc(val.length)
-			: new Buffer(val.length);
-		val.copy(x);
-		return x;
-	} else if (val instanceof Date) {
-		return new Date(val.getTime());
-	} else if (val instanceof RegExp) {
-		return new RegExp(val);
-	} else {
-		throw new Error('Unexpected situation');
-	}
-}
-
-/**
- * Recursive cloning array.
- */
-function deepCloneArray(arr) {
-	var clone = [];
-	arr.forEach(function (item, index) {
-		if (typeof item === 'object' && item !== null) {
-			if (Array.isArray(item)) {
-				clone[index] = deepCloneArray(item);
-			} else if (isSpecificValue(item)) {
-				clone[index] = cloneSpecificValue(item);
-			} else {
-				clone[index] = deepExtend({}, item);
-			}
-		} else {
-			clone[index] = item;
-		}
-	});
-	return clone;
-}
-
-function safeGetProperty(object, property) {
-	return property === '__proto__' ? undefined : object[property];
-}
-
-/**
- * Extening object that entered in first argument.
- *
- * Returns extended object or false if have no target object or incorrect type.
- *
- * If you wish to clone source object (without modify it), just use empty new
- * object as first argument, like this:
- *   deepExtend({}, yourObj_1, [yourObj_N]);
- */
-var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
-	if (arguments.length < 1 || typeof arguments[0] !== 'object') {
-		return false;
-	}
-
-	if (arguments.length < 2) {
-		return arguments[0];
-	}
-
-	var target = arguments[0];
-
-	// convert arguments to array and cut off target object
-	var args = Array.prototype.slice.call(arguments, 1);
-
-	var val, src, clone;
-
-	args.forEach(function (obj) {
-		// skip argument if isn't an object, is null, or is an array
-		if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
-			return;
-		}
-
-		Object.keys(obj).forEach(function (key) {
-			src = safeGetProperty(target, key); // source value
-			val = safeGetProperty(obj, key); // new value
-
-			// recursion prevention
-			if (val === target) {
-				return;
-
-			/**
-			 * if new value isn't object then just overwrite by new value
-			 * instead of extending.
-			 */
-			} else if (typeof val !== 'object' || val === null) {
-				target[key] = val;
-				return;
-
-			// just clone arrays (and recursive clone objects inside)
-			} else if (Array.isArray(val)) {
-				target[key] = deepCloneArray(val);
-				return;
-
-			// custom cloning and overwrite for specific objects
-			} else if (isSpecificValue(val)) {
-				target[key] = cloneSpecificValue(val);
-				return;
-
-			// overwrite by new value if source isn't object or array
-			} else if (typeof src !== 'object' || src === null || Array.isArray(src)) {
-				target[key] = deepExtend({}, val);
-				return;
-
-			// source value and new value is objects both, extending...
-			} else {
-				target[key] = deepExtend(src, val);
-				return;
-			}
-		});
-	});
-
-	return target;
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("b639").Buffer))
-
-/***/ }),
-
-/***/ "4362":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.nextTick = function nextTick(fn) {
-    var args = Array.prototype.slice.call(arguments);
-    args.shift();
-    setTimeout(function () {
-        fn.apply(null, args);
-    }, 0);
-};
-
-exports.platform = exports.arch = 
-exports.execPath = exports.title = 'browser';
-exports.pid = 1;
-exports.browser = true;
-exports.env = {};
-exports.argv = [];
-
-exports.binding = function (name) {
-	throw new Error('No such module. (Possibly not yet loaded)')
-};
-
-(function () {
-    var cwd = '/';
-    var path;
-    exports.cwd = function () { return cwd };
-    exports.chdir = function (dir) {
-        if (!path) path = __webpack_require__("df7c");
-        cwd = path.resolve(dir, cwd);
-    };
-})();
-
-exports.exit = exports.kill = 
-exports.umask = exports.dlopen = 
-exports.uptime = exports.memoryUsage = 
-exports.uvCounters = function() {};
-exports.features = {};
-
-
-/***/ }),
-
-/***/ "69a0":
-/***/ (function(module, exports, __webpack_require__) {
-
-(function (factory) {
-    if (true) {
-        // Node/CommonJS
-        module.exports = factory();
-    } else { var glob; }
-}(function (undefined) {
-
-    'use strict';
-
-    /*
-     * Fastest md5 implementation around (JKM md5).
-     * Credits: Joseph Myers
-     *
-     * @see http://www.myersdaily.org/joseph/javascript/md5-text.html
-     * @see http://jsperf.com/md5-shootout/7
-     */
-
-    /* this function is much faster,
-      so if possible we use it. Some IEs
-      are the only ones I know of that
-      need the idiotic second function,
-      generated by an if clause.  */
-    var add32 = function (a, b) {
-        return (a + b) & 0xFFFFFFFF;
-    },
-        hex_chr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-
-
-    function cmn(q, a, b, x, s, t) {
-        a = add32(add32(a, q), add32(x, t));
-        return add32((a << s) | (a >>> (32 - s)), b);
-    }
-
-    function md5cycle(x, k) {
-        var a = x[0],
-            b = x[1],
-            c = x[2],
-            d = x[3];
-
-        a += (b & c | ~b & d) + k[0] - 680876936 | 0;
-        a  = (a << 7 | a >>> 25) + b | 0;
-        d += (a & b | ~a & c) + k[1] - 389564586 | 0;
-        d  = (d << 12 | d >>> 20) + a | 0;
-        c += (d & a | ~d & b) + k[2] + 606105819 | 0;
-        c  = (c << 17 | c >>> 15) + d | 0;
-        b += (c & d | ~c & a) + k[3] - 1044525330 | 0;
-        b  = (b << 22 | b >>> 10) + c | 0;
-        a += (b & c | ~b & d) + k[4] - 176418897 | 0;
-        a  = (a << 7 | a >>> 25) + b | 0;
-        d += (a & b | ~a & c) + k[5] + 1200080426 | 0;
-        d  = (d << 12 | d >>> 20) + a | 0;
-        c += (d & a | ~d & b) + k[6] - 1473231341 | 0;
-        c  = (c << 17 | c >>> 15) + d | 0;
-        b += (c & d | ~c & a) + k[7] - 45705983 | 0;
-        b  = (b << 22 | b >>> 10) + c | 0;
-        a += (b & c | ~b & d) + k[8] + 1770035416 | 0;
-        a  = (a << 7 | a >>> 25) + b | 0;
-        d += (a & b | ~a & c) + k[9] - 1958414417 | 0;
-        d  = (d << 12 | d >>> 20) + a | 0;
-        c += (d & a | ~d & b) + k[10] - 42063 | 0;
-        c  = (c << 17 | c >>> 15) + d | 0;
-        b += (c & d | ~c & a) + k[11] - 1990404162 | 0;
-        b  = (b << 22 | b >>> 10) + c | 0;
-        a += (b & c | ~b & d) + k[12] + 1804603682 | 0;
-        a  = (a << 7 | a >>> 25) + b | 0;
-        d += (a & b | ~a & c) + k[13] - 40341101 | 0;
-        d  = (d << 12 | d >>> 20) + a | 0;
-        c += (d & a | ~d & b) + k[14] - 1502002290 | 0;
-        c  = (c << 17 | c >>> 15) + d | 0;
-        b += (c & d | ~c & a) + k[15] + 1236535329 | 0;
-        b  = (b << 22 | b >>> 10) + c | 0;
-
-        a += (b & d | c & ~d) + k[1] - 165796510 | 0;
-        a  = (a << 5 | a >>> 27) + b | 0;
-        d += (a & c | b & ~c) + k[6] - 1069501632 | 0;
-        d  = (d << 9 | d >>> 23) + a | 0;
-        c += (d & b | a & ~b) + k[11] + 643717713 | 0;
-        c  = (c << 14 | c >>> 18) + d | 0;
-        b += (c & a | d & ~a) + k[0] - 373897302 | 0;
-        b  = (b << 20 | b >>> 12) + c | 0;
-        a += (b & d | c & ~d) + k[5] - 701558691 | 0;
-        a  = (a << 5 | a >>> 27) + b | 0;
-        d += (a & c | b & ~c) + k[10] + 38016083 | 0;
-        d  = (d << 9 | d >>> 23) + a | 0;
-        c += (d & b | a & ~b) + k[15] - 660478335 | 0;
-        c  = (c << 14 | c >>> 18) + d | 0;
-        b += (c & a | d & ~a) + k[4] - 405537848 | 0;
-        b  = (b << 20 | b >>> 12) + c | 0;
-        a += (b & d | c & ~d) + k[9] + 568446438 | 0;
-        a  = (a << 5 | a >>> 27) + b | 0;
-        d += (a & c | b & ~c) + k[14] - 1019803690 | 0;
-        d  = (d << 9 | d >>> 23) + a | 0;
-        c += (d & b | a & ~b) + k[3] - 187363961 | 0;
-        c  = (c << 14 | c >>> 18) + d | 0;
-        b += (c & a | d & ~a) + k[8] + 1163531501 | 0;
-        b  = (b << 20 | b >>> 12) + c | 0;
-        a += (b & d | c & ~d) + k[13] - 1444681467 | 0;
-        a  = (a << 5 | a >>> 27) + b | 0;
-        d += (a & c | b & ~c) + k[2] - 51403784 | 0;
-        d  = (d << 9 | d >>> 23) + a | 0;
-        c += (d & b | a & ~b) + k[7] + 1735328473 | 0;
-        c  = (c << 14 | c >>> 18) + d | 0;
-        b += (c & a | d & ~a) + k[12] - 1926607734 | 0;
-        b  = (b << 20 | b >>> 12) + c | 0;
-
-        a += (b ^ c ^ d) + k[5] - 378558 | 0;
-        a  = (a << 4 | a >>> 28) + b | 0;
-        d += (a ^ b ^ c) + k[8] - 2022574463 | 0;
-        d  = (d << 11 | d >>> 21) + a | 0;
-        c += (d ^ a ^ b) + k[11] + 1839030562 | 0;
-        c  = (c << 16 | c >>> 16) + d | 0;
-        b += (c ^ d ^ a) + k[14] - 35309556 | 0;
-        b  = (b << 23 | b >>> 9) + c | 0;
-        a += (b ^ c ^ d) + k[1] - 1530992060 | 0;
-        a  = (a << 4 | a >>> 28) + b | 0;
-        d += (a ^ b ^ c) + k[4] + 1272893353 | 0;
-        d  = (d << 11 | d >>> 21) + a | 0;
-        c += (d ^ a ^ b) + k[7] - 155497632 | 0;
-        c  = (c << 16 | c >>> 16) + d | 0;
-        b += (c ^ d ^ a) + k[10] - 1094730640 | 0;
-        b  = (b << 23 | b >>> 9) + c | 0;
-        a += (b ^ c ^ d) + k[13] + 681279174 | 0;
-        a  = (a << 4 | a >>> 28) + b | 0;
-        d += (a ^ b ^ c) + k[0] - 358537222 | 0;
-        d  = (d << 11 | d >>> 21) + a | 0;
-        c += (d ^ a ^ b) + k[3] - 722521979 | 0;
-        c  = (c << 16 | c >>> 16) + d | 0;
-        b += (c ^ d ^ a) + k[6] + 76029189 | 0;
-        b  = (b << 23 | b >>> 9) + c | 0;
-        a += (b ^ c ^ d) + k[9] - 640364487 | 0;
-        a  = (a << 4 | a >>> 28) + b | 0;
-        d += (a ^ b ^ c) + k[12] - 421815835 | 0;
-        d  = (d << 11 | d >>> 21) + a | 0;
-        c += (d ^ a ^ b) + k[15] + 530742520 | 0;
-        c  = (c << 16 | c >>> 16) + d | 0;
-        b += (c ^ d ^ a) + k[2] - 995338651 | 0;
-        b  = (b << 23 | b >>> 9) + c | 0;
-
-        a += (c ^ (b | ~d)) + k[0] - 198630844 | 0;
-        a  = (a << 6 | a >>> 26) + b | 0;
-        d += (b ^ (a | ~c)) + k[7] + 1126891415 | 0;
-        d  = (d << 10 | d >>> 22) + a | 0;
-        c += (a ^ (d | ~b)) + k[14] - 1416354905 | 0;
-        c  = (c << 15 | c >>> 17) + d | 0;
-        b += (d ^ (c | ~a)) + k[5] - 57434055 | 0;
-        b  = (b << 21 |b >>> 11) + c | 0;
-        a += (c ^ (b | ~d)) + k[12] + 1700485571 | 0;
-        a  = (a << 6 | a >>> 26) + b | 0;
-        d += (b ^ (a | ~c)) + k[3] - 1894986606 | 0;
-        d  = (d << 10 | d >>> 22) + a | 0;
-        c += (a ^ (d | ~b)) + k[10] - 1051523 | 0;
-        c  = (c << 15 | c >>> 17) + d | 0;
-        b += (d ^ (c | ~a)) + k[1] - 2054922799 | 0;
-        b  = (b << 21 |b >>> 11) + c | 0;
-        a += (c ^ (b | ~d)) + k[8] + 1873313359 | 0;
-        a  = (a << 6 | a >>> 26) + b | 0;
-        d += (b ^ (a | ~c)) + k[15] - 30611744 | 0;
-        d  = (d << 10 | d >>> 22) + a | 0;
-        c += (a ^ (d | ~b)) + k[6] - 1560198380 | 0;
-        c  = (c << 15 | c >>> 17) + d | 0;
-        b += (d ^ (c | ~a)) + k[13] + 1309151649 | 0;
-        b  = (b << 21 |b >>> 11) + c | 0;
-        a += (c ^ (b | ~d)) + k[4] - 145523070 | 0;
-        a  = (a << 6 | a >>> 26) + b | 0;
-        d += (b ^ (a | ~c)) + k[11] - 1120210379 | 0;
-        d  = (d << 10 | d >>> 22) + a | 0;
-        c += (a ^ (d | ~b)) + k[2] + 718787259 | 0;
-        c  = (c << 15 | c >>> 17) + d | 0;
-        b += (d ^ (c | ~a)) + k[9] - 343485551 | 0;
-        b  = (b << 21 | b >>> 11) + c | 0;
-
-        x[0] = a + x[0] | 0;
-        x[1] = b + x[1] | 0;
-        x[2] = c + x[2] | 0;
-        x[3] = d + x[3] | 0;
-    }
-
-    function md5blk(s) {
-        var md5blks = [],
-            i; /* Andy King said do it this way. */
-
-        for (i = 0; i < 64; i += 4) {
-            md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
-        }
-        return md5blks;
-    }
-
-    function md5blk_array(a) {
-        var md5blks = [],
-            i; /* Andy King said do it this way. */
-
-        for (i = 0; i < 64; i += 4) {
-            md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
-        }
-        return md5blks;
-    }
-
-    function md51(s) {
-        var n = s.length,
-            state = [1732584193, -271733879, -1732584194, 271733878],
-            i,
-            length,
-            tail,
-            tmp,
-            lo,
-            hi;
-
-        for (i = 64; i <= n; i += 64) {
-            md5cycle(state, md5blk(s.substring(i - 64, i)));
-        }
-        s = s.substring(i - 64);
-        length = s.length;
-        tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        for (i = 0; i < length; i += 1) {
-            tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
-        }
-        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
-        if (i > 55) {
-            md5cycle(state, tail);
-            for (i = 0; i < 16; i += 1) {
-                tail[i] = 0;
-            }
-        }
-
-        // Beware that the final length might not fit in 32 bits so we take care of that
-        tmp = n * 8;
-        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-        lo = parseInt(tmp[2], 16);
-        hi = parseInt(tmp[1], 16) || 0;
-
-        tail[14] = lo;
-        tail[15] = hi;
-
-        md5cycle(state, tail);
-        return state;
-    }
-
-    function md51_array(a) {
-        var n = a.length,
-            state = [1732584193, -271733879, -1732584194, 271733878],
-            i,
-            length,
-            tail,
-            tmp,
-            lo,
-            hi;
-
-        for (i = 64; i <= n; i += 64) {
-            md5cycle(state, md5blk_array(a.subarray(i - 64, i)));
-        }
-
-        // Not sure if it is a bug, however IE10 will always produce a sub array of length 1
-        // containing the last element of the parent array if the sub array specified starts
-        // beyond the length of the parent array - weird.
-        // https://connect.microsoft.com/IE/feedback/details/771452/typed-array-subarray-issue
-        a = (i - 64) < n ? a.subarray(i - 64) : new Uint8Array(0);
-
-        length = a.length;
-        tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        for (i = 0; i < length; i += 1) {
-            tail[i >> 2] |= a[i] << ((i % 4) << 3);
-        }
-
-        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
-        if (i > 55) {
-            md5cycle(state, tail);
-            for (i = 0; i < 16; i += 1) {
-                tail[i] = 0;
-            }
-        }
-
-        // Beware that the final length might not fit in 32 bits so we take care of that
-        tmp = n * 8;
-        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-        lo = parseInt(tmp[2], 16);
-        hi = parseInt(tmp[1], 16) || 0;
-
-        tail[14] = lo;
-        tail[15] = hi;
-
-        md5cycle(state, tail);
-
-        return state;
-    }
-
-    function rhex(n) {
-        var s = '',
-            j;
-        for (j = 0; j < 4; j += 1) {
-            s += hex_chr[(n >> (j * 8 + 4)) & 0x0F] + hex_chr[(n >> (j * 8)) & 0x0F];
-        }
-        return s;
-    }
-
-    function hex(x) {
-        var i;
-        for (i = 0; i < x.length; i += 1) {
-            x[i] = rhex(x[i]);
-        }
-        return x.join('');
-    }
-
-    // In some cases the fast add32 function cannot be used..
-    if (hex(md51('hello')) !== '5d41402abc4b2a76b9719d911017c592') {
-        add32 = function (x, y) {
-            var lsw = (x & 0xFFFF) + (y & 0xFFFF),
-                msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-            return (msw << 16) | (lsw & 0xFFFF);
-        };
-    }
-
-    // ---------------------------------------------------
-
-    /**
-     * ArrayBuffer slice polyfill.
-     *
-     * @see https://github.com/ttaubert/node-arraybuffer-slice
-     */
-
-    if (typeof ArrayBuffer !== 'undefined' && !ArrayBuffer.prototype.slice) {
-        (function () {
-            function clamp(val, length) {
-                val = (val | 0) || 0;
-
-                if (val < 0) {
-                    return Math.max(val + length, 0);
-                }
-
-                return Math.min(val, length);
-            }
-
-            ArrayBuffer.prototype.slice = function (from, to) {
-                var length = this.byteLength,
-                    begin = clamp(from, length),
-                    end = length,
-                    num,
-                    target,
-                    targetArray,
-                    sourceArray;
-
-                if (to !== undefined) {
-                    end = clamp(to, length);
-                }
-
-                if (begin > end) {
-                    return new ArrayBuffer(0);
-                }
-
-                num = end - begin;
-                target = new ArrayBuffer(num);
-                targetArray = new Uint8Array(target);
-
-                sourceArray = new Uint8Array(this, begin, num);
-                targetArray.set(sourceArray);
-
-                return target;
-            };
-        })();
-    }
-
-    // ---------------------------------------------------
-
-    /**
-     * Helpers.
-     */
-
-    function toUtf8(str) {
-        if (/[\u0080-\uFFFF]/.test(str)) {
-            str = unescape(encodeURIComponent(str));
-        }
-
-        return str;
-    }
-
-    function utf8Str2ArrayBuffer(str, returnUInt8Array) {
-        var length = str.length,
-           buff = new ArrayBuffer(length),
-           arr = new Uint8Array(buff),
-           i;
-
-        for (i = 0; i < length; i += 1) {
-            arr[i] = str.charCodeAt(i);
-        }
-
-        return returnUInt8Array ? arr : buff;
-    }
-
-    function arrayBuffer2Utf8Str(buff) {
-        return String.fromCharCode.apply(null, new Uint8Array(buff));
-    }
-
-    function concatenateArrayBuffers(first, second, returnUInt8Array) {
-        var result = new Uint8Array(first.byteLength + second.byteLength);
-
-        result.set(new Uint8Array(first));
-        result.set(new Uint8Array(second), first.byteLength);
-
-        return returnUInt8Array ? result : result.buffer;
-    }
-
-    function hexToBinaryString(hex) {
-        var bytes = [],
-            length = hex.length,
-            x;
-
-        for (x = 0; x < length - 1; x += 2) {
-            bytes.push(parseInt(hex.substr(x, 2), 16));
-        }
-
-        return String.fromCharCode.apply(String, bytes);
-    }
-
-    // ---------------------------------------------------
-
-    /**
-     * SparkMD5 OOP implementation.
-     *
-     * Use this class to perform an incremental md5, otherwise use the
-     * static methods instead.
-     */
-
-    function SparkMD5() {
-        // call reset to init the instance
-        this.reset();
-    }
-
-    /**
-     * Appends a string.
-     * A conversion will be applied if an utf8 string is detected.
-     *
-     * @param {String} str The string to be appended
-     *
-     * @return {SparkMD5} The instance itself
-     */
-    SparkMD5.prototype.append = function (str) {
-        // Converts the string to utf8 bytes if necessary
-        // Then append as binary
-        this.appendBinary(toUtf8(str));
-
-        return this;
-    };
-
-    /**
-     * Appends a binary string.
-     *
-     * @param {String} contents The binary string to be appended
-     *
-     * @return {SparkMD5} The instance itself
-     */
-    SparkMD5.prototype.appendBinary = function (contents) {
-        this._buff += contents;
-        this._length += contents.length;
-
-        var length = this._buff.length,
-            i;
-
-        for (i = 64; i <= length; i += 64) {
-            md5cycle(this._hash, md5blk(this._buff.substring(i - 64, i)));
-        }
-
-        this._buff = this._buff.substring(i - 64);
-
-        return this;
-    };
-
-    /**
-     * Finishes the incremental computation, reseting the internal state and
-     * returning the result.
-     *
-     * @param {Boolean} raw True to get the raw string, false to get the hex string
-     *
-     * @return {String} The result
-     */
-    SparkMD5.prototype.end = function (raw) {
-        var buff = this._buff,
-            length = buff.length,
-            i,
-            tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ret;
-
-        for (i = 0; i < length; i += 1) {
-            tail[i >> 2] |= buff.charCodeAt(i) << ((i % 4) << 3);
-        }
-
-        this._finish(tail, length);
-        ret = hex(this._hash);
-
-        if (raw) {
-            ret = hexToBinaryString(ret);
-        }
-
-        this.reset();
-
-        return ret;
-    };
-
-    /**
-     * Resets the internal state of the computation.
-     *
-     * @return {SparkMD5} The instance itself
-     */
-    SparkMD5.prototype.reset = function () {
-        this._buff = '';
-        this._length = 0;
-        this._hash = [1732584193, -271733879, -1732584194, 271733878];
-
-        return this;
-    };
-
-    /**
-     * Gets the internal state of the computation.
-     *
-     * @return {Object} The state
-     */
-    SparkMD5.prototype.getState = function () {
-        return {
-            buff: this._buff,
-            length: this._length,
-            hash: this._hash
-        };
-    };
-
-    /**
-     * Gets the internal state of the computation.
-     *
-     * @param {Object} state The state
-     *
-     * @return {SparkMD5} The instance itself
-     */
-    SparkMD5.prototype.setState = function (state) {
-        this._buff = state.buff;
-        this._length = state.length;
-        this._hash = state.hash;
-
-        return this;
-    };
-
-    /**
-     * Releases memory used by the incremental buffer and other additional
-     * resources. If you plan to use the instance again, use reset instead.
-     */
-    SparkMD5.prototype.destroy = function () {
-        delete this._hash;
-        delete this._buff;
-        delete this._length;
-    };
-
-    /**
-     * Finish the final calculation based on the tail.
-     *
-     * @param {Array}  tail   The tail (will be modified)
-     * @param {Number} length The length of the remaining buffer
-     */
-    SparkMD5.prototype._finish = function (tail, length) {
-        var i = length,
-            tmp,
-            lo,
-            hi;
-
-        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
-        if (i > 55) {
-            md5cycle(this._hash, tail);
-            for (i = 0; i < 16; i += 1) {
-                tail[i] = 0;
-            }
-        }
-
-        // Do the final computation based on the tail and length
-        // Beware that the final length may not fit in 32 bits so we take care of that
-        tmp = this._length * 8;
-        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
-        lo = parseInt(tmp[2], 16);
-        hi = parseInt(tmp[1], 16) || 0;
-
-        tail[14] = lo;
-        tail[15] = hi;
-        md5cycle(this._hash, tail);
-    };
-
-    /**
-     * Performs the md5 hash on a string.
-     * A conversion will be applied if utf8 string is detected.
-     *
-     * @param {String}  str The string
-     * @param {Boolean} raw True to get the raw string, false to get the hex string
-     *
-     * @return {String} The result
-     */
-    SparkMD5.hash = function (str, raw) {
-        // Converts the string to utf8 bytes if necessary
-        // Then compute it using the binary function
-        return SparkMD5.hashBinary(toUtf8(str), raw);
-    };
-
-    /**
-     * Performs the md5 hash on a binary string.
-     *
-     * @param {String}  content The binary string
-     * @param {Boolean} raw     True to get the raw string, false to get the hex string
-     *
-     * @return {String} The result
-     */
-    SparkMD5.hashBinary = function (content, raw) {
-        var hash = md51(content),
-            ret = hex(hash);
-
-        return raw ? hexToBinaryString(ret) : ret;
-    };
-
-    // ---------------------------------------------------
-
-    /**
-     * SparkMD5 OOP implementation for array buffers.
-     *
-     * Use this class to perform an incremental md5 ONLY for array buffers.
-     */
-    SparkMD5.ArrayBuffer = function () {
-        // call reset to init the instance
-        this.reset();
-    };
-
-    /**
-     * Appends an array buffer.
-     *
-     * @param {ArrayBuffer} arr The array to be appended
-     *
-     * @return {SparkMD5.ArrayBuffer} The instance itself
-     */
-    SparkMD5.ArrayBuffer.prototype.append = function (arr) {
-        var buff = concatenateArrayBuffers(this._buff.buffer, arr, true),
-            length = buff.length,
-            i;
-
-        this._length += arr.byteLength;
-
-        for (i = 64; i <= length; i += 64) {
-            md5cycle(this._hash, md5blk_array(buff.subarray(i - 64, i)));
-        }
-
-        this._buff = (i - 64) < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
-
-        return this;
-    };
-
-    /**
-     * Finishes the incremental computation, reseting the internal state and
-     * returning the result.
-     *
-     * @param {Boolean} raw True to get the raw string, false to get the hex string
-     *
-     * @return {String} The result
-     */
-    SparkMD5.ArrayBuffer.prototype.end = function (raw) {
-        var buff = this._buff,
-            length = buff.length,
-            tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            i,
-            ret;
-
-        for (i = 0; i < length; i += 1) {
-            tail[i >> 2] |= buff[i] << ((i % 4) << 3);
-        }
-
-        this._finish(tail, length);
-        ret = hex(this._hash);
-
-        if (raw) {
-            ret = hexToBinaryString(ret);
-        }
-
-        this.reset();
-
-        return ret;
-    };
-
-    /**
-     * Resets the internal state of the computation.
-     *
-     * @return {SparkMD5.ArrayBuffer} The instance itself
-     */
-    SparkMD5.ArrayBuffer.prototype.reset = function () {
-        this._buff = new Uint8Array(0);
-        this._length = 0;
-        this._hash = [1732584193, -271733879, -1732584194, 271733878];
-
-        return this;
-    };
-
-    /**
-     * Gets the internal state of the computation.
-     *
-     * @return {Object} The state
-     */
-    SparkMD5.ArrayBuffer.prototype.getState = function () {
-        var state = SparkMD5.prototype.getState.call(this);
-
-        // Convert buffer to a string
-        state.buff = arrayBuffer2Utf8Str(state.buff);
-
-        return state;
-    };
-
-    /**
-     * Gets the internal state of the computation.
-     *
-     * @param {Object} state The state
-     *
-     * @return {SparkMD5.ArrayBuffer} The instance itself
-     */
-    SparkMD5.ArrayBuffer.prototype.setState = function (state) {
-        // Convert string to buffer
-        state.buff = utf8Str2ArrayBuffer(state.buff, true);
-
-        return SparkMD5.prototype.setState.call(this, state);
-    };
-
-    SparkMD5.ArrayBuffer.prototype.destroy = SparkMD5.prototype.destroy;
-
-    SparkMD5.ArrayBuffer.prototype._finish = SparkMD5.prototype._finish;
-
-    /**
-     * Performs the md5 hash on an array buffer.
-     *
-     * @param {ArrayBuffer} arr The array buffer
-     * @param {Boolean}     raw True to get the raw string, false to get the hex one
-     *
-     * @return {String} The result
-     */
-    SparkMD5.ArrayBuffer.hash = function (arr, raw) {
-        var hash = md51_array(new Uint8Array(arr)),
-            ret = hex(hash);
-
-        return raw ? hexToBinaryString(ret) : ret;
-    };
-
-    return SparkMD5;
-}));
-
-
-/***/ }),
-
-/***/ "6f28":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Stringify/parse functions that don't operate
- * recursively, so they avoid call stack exceeded
- * errors.
- */
-exports.stringify = function stringify(input) {
-  var queue = [];
-  queue.push({obj: input});
-
-  var res = '';
-  var next, obj, prefix, val, i, arrayPrefix, keys, k, key, value, objPrefix;
-  while ((next = queue.pop())) {
-    obj = next.obj;
-    prefix = next.prefix || '';
-    val = next.val || '';
-    res += prefix;
-    if (val) {
-      res += val;
-    } else if (typeof obj !== 'object') {
-      res += typeof obj === 'undefined' ? null : JSON.stringify(obj);
-    } else if (obj === null) {
-      res += 'null';
-    } else if (Array.isArray(obj)) {
-      queue.push({val: ']'});
-      for (i = obj.length - 1; i >= 0; i--) {
-        arrayPrefix = i === 0 ? '' : ',';
-        queue.push({obj: obj[i], prefix: arrayPrefix});
-      }
-      queue.push({val: '['});
-    } else { // object
-      keys = [];
-      for (k in obj) {
-        if (obj.hasOwnProperty(k)) {
-          keys.push(k);
-        }
-      }
-      queue.push({val: '}'});
-      for (i = keys.length - 1; i >= 0; i--) {
-        key = keys[i];
-        value = obj[key];
-        objPrefix = (i > 0 ? ',' : '');
-        objPrefix += JSON.stringify(key) + ':';
-        queue.push({obj: value, prefix: objPrefix});
-      }
-      queue.push({val: '{'});
-    }
-  }
-  return res;
-};
-
-// Convenience function for the parse function.
-// This pop function is basically copied from
-// pouchCollate.parseIndexableString
-function pop(obj, stack, metaStack) {
-  var lastMetaElement = metaStack[metaStack.length - 1];
-  if (obj === lastMetaElement.element) {
-    // popping a meta-element, e.g. an object whose value is another object
-    metaStack.pop();
-    lastMetaElement = metaStack[metaStack.length - 1];
-  }
-  var element = lastMetaElement.element;
-  var lastElementIndex = lastMetaElement.index;
-  if (Array.isArray(element)) {
-    element.push(obj);
-  } else if (lastElementIndex === stack.length - 2) { // obj with key+value
-    var key = stack.pop();
-    element[key] = obj;
-  } else {
-    stack.push(obj); // obj with key only
-  }
-}
-
-exports.parse = function (str) {
-  var stack = [];
-  var metaStack = []; // stack for arrays and objects
-  var i = 0;
-  var collationIndex,parsedNum,numChar;
-  var parsedString,lastCh,numConsecutiveSlashes,ch;
-  var arrayElement, objElement;
-  while (true) {
-    collationIndex = str[i++];
-    if (collationIndex === '}' ||
-        collationIndex === ']' ||
-        typeof collationIndex === 'undefined') {
-      if (stack.length === 1) {
-        return stack.pop();
-      } else {
-        pop(stack.pop(), stack, metaStack);
-        continue;
-      }
-    }
-    switch (collationIndex) {
-      case ' ':
-      case '\t':
-      case '\n':
-      case ':':
-      case ',':
-        break;
-      case 'n':
-        i += 3; // 'ull'
-        pop(null, stack, metaStack);
-        break;
-      case 't':
-        i += 3; // 'rue'
-        pop(true, stack, metaStack);
-        break;
-      case 'f':
-        i += 4; // 'alse'
-        pop(false, stack, metaStack);
-        break;
-      case '0':
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-      case '-':
-        parsedNum = '';
-        i--;
-        while (true) {
-          numChar = str[i++];
-          if (/[\d\.\-e\+]/.test(numChar)) {
-            parsedNum += numChar;
-          } else {
-            i--;
-            break;
-          }
-        }
-        pop(parseFloat(parsedNum), stack, metaStack);
-        break;
-      case '"':
-        parsedString = '';
-        lastCh = void 0;
-        numConsecutiveSlashes = 0;
-        while (true) {
-          ch = str[i++];
-          if (ch !== '"' || (lastCh === '\\' &&
-              numConsecutiveSlashes % 2 === 1)) {
-            parsedString += ch;
-            lastCh = ch;
-            if (lastCh === '\\') {
-              numConsecutiveSlashes++;
-            } else {
-              numConsecutiveSlashes = 0;
-            }
-          } else {
-            break;
-          }
-        }
-        pop(JSON.parse('"' + parsedString + '"'), stack, metaStack);
-        break;
-      case '[':
-        arrayElement = { element: [], index: stack.length };
-        stack.push(arrayElement.element);
-        metaStack.push(arrayElement);
-        break;
-      case '{':
-        objElement = { element: {}, index: stack.length };
-        stack.push(objElement.element);
-        metaStack.push(objElement);
-        break;
-      default:
-        throw new Error(
-          'unexpectedly reached end of input: ' + collationIndex);
-    }
-  }
-};
-
-
-/***/ }),
-
-/***/ "78f5":
-/***/ (function(module, exports, __webpack_require__) {
-
-var v1 = __webpack_require__("9cf8");
-var v4 = __webpack_require__("b7b7");
-
-var uuid = v4;
-uuid.v1 = v1;
-uuid.v4 = v4;
-
-module.exports = uuid;
-
-
-/***/ }),
-
-/***/ "9152":
-/***/ (function(module, exports) {
-
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = (nBytes * 8) - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = ((value * c) - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-
-/***/ }),
-
-/***/ "9306":
-/***/ (function(module, exports) {
-
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      ctor.prototype = Object.create(superCtor.prototype, {
-        constructor: {
-          value: ctor,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      })
-    }
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      var TempCtor = function () {}
-      TempCtor.prototype = superCtor.prototype
-      ctor.prototype = new TempCtor()
-      ctor.prototype.constructor = ctor
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ "932d":
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__("f8c1");
-var bytesToUuid = __webpack_require__("dba1");
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-
-var _nodeId;
-var _clockseq;
-
-// Previous uuid creation time
-var _lastMSecs = 0;
-var _lastNSecs = 0;
-
-// See https://github.com/broofa/node-uuid for API details
-function v1(options, buf, offset) {
-  var i = buf && offset || 0;
-  var b = buf || [];
-
-  options = options || {};
-  var node = options.node || _nodeId;
-  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-
-  // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-  if (node == null || clockseq == null) {
-    var seedBytes = rng();
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [
-        seedBytes[0] | 0x01,
-        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
-      ];
-    }
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  }
-
-  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-
-  // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-
-  // Time since last uuid creation (in msecs)
-  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-
-  // Per 4.2.1.2, Bump clockseq on clock regression
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  }
-
-  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  }
-
-  // Per 4.2.1.2 Throw error if too many uuids are requested
-  if (nsecs >= 10000) {
-    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq;
-
-  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-  msecs += 12219292800000;
-
-  // `time_low`
-  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff;
-
-  // `time_mid`
-  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff;
-
-  // `time_high_and_version`
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-  b[i++] = tmh >>> 16 & 0xff;
-
-  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-  b[i++] = clockseq >>> 8 | 0x80;
-
-  // `clock_seq_low`
-  b[i++] = clockseq & 0xff;
-
-  // `node`
-  for (var n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf ? buf : bytesToUuid(b);
-}
-
-module.exports = v1;
-
-
-/***/ }),
-
-/***/ "9cf8":
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__("28fa");
-var bytesToUuid = __webpack_require__("d203");
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-
-var _nodeId;
-var _clockseq;
-
-// Previous uuid creation time
-var _lastMSecs = 0;
-var _lastNSecs = 0;
-
-// See https://github.com/broofa/node-uuid for API details
-function v1(options, buf, offset) {
-  var i = buf && offset || 0;
-  var b = buf || [];
-
-  options = options || {};
-  var node = options.node || _nodeId;
-  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
-
-  // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-  if (node == null || clockseq == null) {
-    var seedBytes = rng();
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [
-        seedBytes[0] | 0x01,
-        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
-      ];
-    }
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  }
-
-  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
-
-  // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
-
-  // Time since last uuid creation (in msecs)
-  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
-
-  // Per 4.2.1.2, Bump clockseq on clock regression
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  }
-
-  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  }
-
-  // Per 4.2.1.2 Throw error if too many uuids are requested
-  if (nsecs >= 10000) {
-    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq;
-
-  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-  msecs += 12219292800000;
-
-  // `time_low`
-  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff;
-
-  // `time_mid`
-  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff;
-
-  // `time_high_and_version`
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-  b[i++] = tmh >>> 16 & 0xff;
-
-  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-  b[i++] = clockseq >>> 8 | 0x80;
-
-  // `clock_seq_low`
-  b[i++] = clockseq & 0xff;
-
-  // `node`
-  for (var n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf ? buf : bytesToUuid(b);
-}
-
-module.exports = v1;
-
-
-/***/ }),
-
-/***/ "b639":
+/***/ "1c35":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14128,38 +12213,1652 @@ function isnan (val) {
 
 /***/ }),
 
-/***/ "b7b7":
+/***/ "1fb5":
 /***/ (function(module, exports, __webpack_require__) {
 
-var rng = __webpack_require__("28fa");
-var bytesToUuid = __webpack_require__("d203");
+"use strict";
 
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
 
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function getLens (b64) {
+  var len = b64.length
+
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
   }
-  options = options || {};
 
-  var rnds = options.random || (options.rng || rng)();
+  // Trim off extra bytes after placeholder bytes are found
+  // See: https://github.com/beatgammit/base64-js/issues/42
+  var validLen = b64.indexOf('=')
+  if (validLen === -1) validLen = len
 
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+  var placeHoldersLen = validLen === len
+    ? 0
+    : 4 - (validLen % 4)
 
-  // Copy bytes to buffer, if provided
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
+  return [validLen, placeHoldersLen]
+}
+
+// base64 is 4/3 + up to two characters of the original data
+function byteLength (b64) {
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function _byteLength (b64, validLen, placeHoldersLen) {
+  return ((validLen + placeHoldersLen) * 3 / 4) - placeHoldersLen
+}
+
+function toByteArray (b64) {
+  var tmp
+  var lens = getLens(b64)
+  var validLen = lens[0]
+  var placeHoldersLen = lens[1]
+
+  var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen))
+
+  var curByte = 0
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  var len = placeHoldersLen > 0
+    ? validLen - 4
+    : validLen
+
+  var i
+  for (i = 0; i < len; i += 4) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 18) |
+      (revLookup[b64.charCodeAt(i + 1)] << 12) |
+      (revLookup[b64.charCodeAt(i + 2)] << 6) |
+      revLookup[b64.charCodeAt(i + 3)]
+    arr[curByte++] = (tmp >> 16) & 0xFF
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 2) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 2) |
+      (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  if (placeHoldersLen === 1) {
+    tmp =
+      (revLookup[b64.charCodeAt(i)] << 10) |
+      (revLookup[b64.charCodeAt(i + 1)] << 4) |
+      (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[curByte++] = (tmp >> 8) & 0xFF
+    arr[curByte++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] +
+    lookup[num >> 12 & 0x3F] +
+    lookup[num >> 6 & 0x3F] +
+    lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp =
+      ((uint8[i] << 16) & 0xFF0000) +
+      ((uint8[i + 1] << 8) & 0xFF00) +
+      (uint8[i + 2] & 0xFF)
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 2] +
+      lookup[(tmp << 4) & 0x3F] +
+      '=='
+    )
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + uint8[len - 1]
+    parts.push(
+      lookup[tmp >> 10] +
+      lookup[(tmp >> 4) & 0x3F] +
+      lookup[(tmp << 2) & 0x3F] +
+      '='
+    )
+  }
+
+  return parts.join('')
+}
+
+
+/***/ }),
+
+/***/ "383b":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/*!
+ * @description Recursive object extending
+ * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>
+ * @license MIT
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2013-2018 Viacheslav Lotsmanov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+
+
+function isSpecificValue(val) {
+	return (
+		val instanceof Buffer
+		|| val instanceof Date
+		|| val instanceof RegExp
+	) ? true : false;
+}
+
+function cloneSpecificValue(val) {
+	if (val instanceof Buffer) {
+		var x = Buffer.alloc
+			? Buffer.alloc(val.length)
+			: new Buffer(val.length);
+		val.copy(x);
+		return x;
+	} else if (val instanceof Date) {
+		return new Date(val.getTime());
+	} else if (val instanceof RegExp) {
+		return new RegExp(val);
+	} else {
+		throw new Error('Unexpected situation');
+	}
+}
+
+/**
+ * Recursive cloning array.
+ */
+function deepCloneArray(arr) {
+	var clone = [];
+	arr.forEach(function (item, index) {
+		if (typeof item === 'object' && item !== null) {
+			if (Array.isArray(item)) {
+				clone[index] = deepCloneArray(item);
+			} else if (isSpecificValue(item)) {
+				clone[index] = cloneSpecificValue(item);
+			} else {
+				clone[index] = deepExtend({}, item);
+			}
+		} else {
+			clone[index] = item;
+		}
+	});
+	return clone;
+}
+
+function safeGetProperty(object, property) {
+	return property === '__proto__' ? undefined : object[property];
+}
+
+/**
+ * Extening object that entered in first argument.
+ *
+ * Returns extended object or false if have no target object or incorrect type.
+ *
+ * If you wish to clone source object (without modify it), just use empty new
+ * object as first argument, like this:
+ *   deepExtend({}, yourObj_1, [yourObj_N]);
+ */
+var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
+	if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+		return false;
+	}
+
+	if (arguments.length < 2) {
+		return arguments[0];
+	}
+
+	var target = arguments[0];
+
+	// convert arguments to array and cut off target object
+	var args = Array.prototype.slice.call(arguments, 1);
+
+	var val, src, clone;
+
+	args.forEach(function (obj) {
+		// skip argument if isn't an object, is null, or is an array
+		if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+			return;
+		}
+
+		Object.keys(obj).forEach(function (key) {
+			src = safeGetProperty(target, key); // source value
+			val = safeGetProperty(obj, key); // new value
+
+			// recursion prevention
+			if (val === target) {
+				return;
+
+			/**
+			 * if new value isn't object then just overwrite by new value
+			 * instead of extending.
+			 */
+			} else if (typeof val !== 'object' || val === null) {
+				target[key] = val;
+				return;
+
+			// just clone arrays (and recursive clone objects inside)
+			} else if (Array.isArray(val)) {
+				target[key] = deepCloneArray(val);
+				return;
+
+			// custom cloning and overwrite for specific objects
+			} else if (isSpecificValue(val)) {
+				target[key] = cloneSpecificValue(val);
+				return;
+
+			// overwrite by new value if source isn't object or array
+			} else if (typeof src !== 'object' || src === null || Array.isArray(src)) {
+				target[key] = deepExtend({}, val);
+				return;
+
+			// source value and new value is objects both, extending...
+			} else {
+				target[key] = deepExtend(src, val);
+				return;
+			}
+		});
+	});
+
+	return target;
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("1c35").Buffer))
+
+/***/ }),
+
+/***/ "3fb5":
+/***/ (function(module, exports) {
+
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor
+      ctor.prototype = Object.create(superCtor.prototype, {
+        constructor: {
+          value: ctor,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      })
+    }
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    if (superCtor) {
+      ctor.super_ = superCtor
+      var TempCtor = function () {}
+      TempCtor.prototype = superCtor.prototype
+      ctor.prototype = new TempCtor()
+      ctor.prototype.constructor = ctor
+    }
+  }
+}
+
+
+/***/ }),
+
+/***/ "4362":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports.nextTick = function nextTick(fn) {
+    var args = Array.prototype.slice.call(arguments);
+    args.shift();
+    setTimeout(function () {
+        fn.apply(null, args);
+    }, 0);
+};
+
+exports.platform = exports.arch = 
+exports.execPath = exports.title = 'browser';
+exports.pid = 1;
+exports.browser = true;
+exports.env = {};
+exports.argv = [];
+
+exports.binding = function (name) {
+	throw new Error('No such module. (Possibly not yet loaded)')
+};
+
+(function () {
+    var cwd = '/';
+    var path;
+    exports.cwd = function () { return cwd };
+    exports.chdir = function (dir) {
+        if (!path) path = __webpack_require__("df7c");
+        cwd = path.resolve(dir, cwd);
+    };
+})();
+
+exports.exit = exports.kill = 
+exports.umask = exports.dlopen = 
+exports.uptime = exports.memoryUsage = 
+exports.uvCounters = function() {};
+exports.features = {};
+
+
+/***/ }),
+
+/***/ "63d7":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+exports.test = function () {
+  return typeof global.queueMicrotask === 'function';
+};
+
+exports.install = function (func) {
+  return function () {
+    global.queueMicrotask(func);
+  };
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
+
+/***/ }),
+
+/***/ "69a0":
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (factory) {
+    if (true) {
+        // Node/CommonJS
+        module.exports = factory();
+    } else { var glob; }
+}(function (undefined) {
+
+    'use strict';
+
+    /*
+     * Fastest md5 implementation around (JKM md5).
+     * Credits: Joseph Myers
+     *
+     * @see http://www.myersdaily.org/joseph/javascript/md5-text.html
+     * @see http://jsperf.com/md5-shootout/7
+     */
+
+    /* this function is much faster,
+      so if possible we use it. Some IEs
+      are the only ones I know of that
+      need the idiotic second function,
+      generated by an if clause.  */
+    var add32 = function (a, b) {
+        return (a + b) & 0xFFFFFFFF;
+    },
+        hex_chr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+
+
+    function cmn(q, a, b, x, s, t) {
+        a = add32(add32(a, q), add32(x, t));
+        return add32((a << s) | (a >>> (32 - s)), b);
+    }
+
+    function md5cycle(x, k) {
+        var a = x[0],
+            b = x[1],
+            c = x[2],
+            d = x[3];
+
+        a += (b & c | ~b & d) + k[0] - 680876936 | 0;
+        a  = (a << 7 | a >>> 25) + b | 0;
+        d += (a & b | ~a & c) + k[1] - 389564586 | 0;
+        d  = (d << 12 | d >>> 20) + a | 0;
+        c += (d & a | ~d & b) + k[2] + 606105819 | 0;
+        c  = (c << 17 | c >>> 15) + d | 0;
+        b += (c & d | ~c & a) + k[3] - 1044525330 | 0;
+        b  = (b << 22 | b >>> 10) + c | 0;
+        a += (b & c | ~b & d) + k[4] - 176418897 | 0;
+        a  = (a << 7 | a >>> 25) + b | 0;
+        d += (a & b | ~a & c) + k[5] + 1200080426 | 0;
+        d  = (d << 12 | d >>> 20) + a | 0;
+        c += (d & a | ~d & b) + k[6] - 1473231341 | 0;
+        c  = (c << 17 | c >>> 15) + d | 0;
+        b += (c & d | ~c & a) + k[7] - 45705983 | 0;
+        b  = (b << 22 | b >>> 10) + c | 0;
+        a += (b & c | ~b & d) + k[8] + 1770035416 | 0;
+        a  = (a << 7 | a >>> 25) + b | 0;
+        d += (a & b | ~a & c) + k[9] - 1958414417 | 0;
+        d  = (d << 12 | d >>> 20) + a | 0;
+        c += (d & a | ~d & b) + k[10] - 42063 | 0;
+        c  = (c << 17 | c >>> 15) + d | 0;
+        b += (c & d | ~c & a) + k[11] - 1990404162 | 0;
+        b  = (b << 22 | b >>> 10) + c | 0;
+        a += (b & c | ~b & d) + k[12] + 1804603682 | 0;
+        a  = (a << 7 | a >>> 25) + b | 0;
+        d += (a & b | ~a & c) + k[13] - 40341101 | 0;
+        d  = (d << 12 | d >>> 20) + a | 0;
+        c += (d & a | ~d & b) + k[14] - 1502002290 | 0;
+        c  = (c << 17 | c >>> 15) + d | 0;
+        b += (c & d | ~c & a) + k[15] + 1236535329 | 0;
+        b  = (b << 22 | b >>> 10) + c | 0;
+
+        a += (b & d | c & ~d) + k[1] - 165796510 | 0;
+        a  = (a << 5 | a >>> 27) + b | 0;
+        d += (a & c | b & ~c) + k[6] - 1069501632 | 0;
+        d  = (d << 9 | d >>> 23) + a | 0;
+        c += (d & b | a & ~b) + k[11] + 643717713 | 0;
+        c  = (c << 14 | c >>> 18) + d | 0;
+        b += (c & a | d & ~a) + k[0] - 373897302 | 0;
+        b  = (b << 20 | b >>> 12) + c | 0;
+        a += (b & d | c & ~d) + k[5] - 701558691 | 0;
+        a  = (a << 5 | a >>> 27) + b | 0;
+        d += (a & c | b & ~c) + k[10] + 38016083 | 0;
+        d  = (d << 9 | d >>> 23) + a | 0;
+        c += (d & b | a & ~b) + k[15] - 660478335 | 0;
+        c  = (c << 14 | c >>> 18) + d | 0;
+        b += (c & a | d & ~a) + k[4] - 405537848 | 0;
+        b  = (b << 20 | b >>> 12) + c | 0;
+        a += (b & d | c & ~d) + k[9] + 568446438 | 0;
+        a  = (a << 5 | a >>> 27) + b | 0;
+        d += (a & c | b & ~c) + k[14] - 1019803690 | 0;
+        d  = (d << 9 | d >>> 23) + a | 0;
+        c += (d & b | a & ~b) + k[3] - 187363961 | 0;
+        c  = (c << 14 | c >>> 18) + d | 0;
+        b += (c & a | d & ~a) + k[8] + 1163531501 | 0;
+        b  = (b << 20 | b >>> 12) + c | 0;
+        a += (b & d | c & ~d) + k[13] - 1444681467 | 0;
+        a  = (a << 5 | a >>> 27) + b | 0;
+        d += (a & c | b & ~c) + k[2] - 51403784 | 0;
+        d  = (d << 9 | d >>> 23) + a | 0;
+        c += (d & b | a & ~b) + k[7] + 1735328473 | 0;
+        c  = (c << 14 | c >>> 18) + d | 0;
+        b += (c & a | d & ~a) + k[12] - 1926607734 | 0;
+        b  = (b << 20 | b >>> 12) + c | 0;
+
+        a += (b ^ c ^ d) + k[5] - 378558 | 0;
+        a  = (a << 4 | a >>> 28) + b | 0;
+        d += (a ^ b ^ c) + k[8] - 2022574463 | 0;
+        d  = (d << 11 | d >>> 21) + a | 0;
+        c += (d ^ a ^ b) + k[11] + 1839030562 | 0;
+        c  = (c << 16 | c >>> 16) + d | 0;
+        b += (c ^ d ^ a) + k[14] - 35309556 | 0;
+        b  = (b << 23 | b >>> 9) + c | 0;
+        a += (b ^ c ^ d) + k[1] - 1530992060 | 0;
+        a  = (a << 4 | a >>> 28) + b | 0;
+        d += (a ^ b ^ c) + k[4] + 1272893353 | 0;
+        d  = (d << 11 | d >>> 21) + a | 0;
+        c += (d ^ a ^ b) + k[7] - 155497632 | 0;
+        c  = (c << 16 | c >>> 16) + d | 0;
+        b += (c ^ d ^ a) + k[10] - 1094730640 | 0;
+        b  = (b << 23 | b >>> 9) + c | 0;
+        a += (b ^ c ^ d) + k[13] + 681279174 | 0;
+        a  = (a << 4 | a >>> 28) + b | 0;
+        d += (a ^ b ^ c) + k[0] - 358537222 | 0;
+        d  = (d << 11 | d >>> 21) + a | 0;
+        c += (d ^ a ^ b) + k[3] - 722521979 | 0;
+        c  = (c << 16 | c >>> 16) + d | 0;
+        b += (c ^ d ^ a) + k[6] + 76029189 | 0;
+        b  = (b << 23 | b >>> 9) + c | 0;
+        a += (b ^ c ^ d) + k[9] - 640364487 | 0;
+        a  = (a << 4 | a >>> 28) + b | 0;
+        d += (a ^ b ^ c) + k[12] - 421815835 | 0;
+        d  = (d << 11 | d >>> 21) + a | 0;
+        c += (d ^ a ^ b) + k[15] + 530742520 | 0;
+        c  = (c << 16 | c >>> 16) + d | 0;
+        b += (c ^ d ^ a) + k[2] - 995338651 | 0;
+        b  = (b << 23 | b >>> 9) + c | 0;
+
+        a += (c ^ (b | ~d)) + k[0] - 198630844 | 0;
+        a  = (a << 6 | a >>> 26) + b | 0;
+        d += (b ^ (a | ~c)) + k[7] + 1126891415 | 0;
+        d  = (d << 10 | d >>> 22) + a | 0;
+        c += (a ^ (d | ~b)) + k[14] - 1416354905 | 0;
+        c  = (c << 15 | c >>> 17) + d | 0;
+        b += (d ^ (c | ~a)) + k[5] - 57434055 | 0;
+        b  = (b << 21 |b >>> 11) + c | 0;
+        a += (c ^ (b | ~d)) + k[12] + 1700485571 | 0;
+        a  = (a << 6 | a >>> 26) + b | 0;
+        d += (b ^ (a | ~c)) + k[3] - 1894986606 | 0;
+        d  = (d << 10 | d >>> 22) + a | 0;
+        c += (a ^ (d | ~b)) + k[10] - 1051523 | 0;
+        c  = (c << 15 | c >>> 17) + d | 0;
+        b += (d ^ (c | ~a)) + k[1] - 2054922799 | 0;
+        b  = (b << 21 |b >>> 11) + c | 0;
+        a += (c ^ (b | ~d)) + k[8] + 1873313359 | 0;
+        a  = (a << 6 | a >>> 26) + b | 0;
+        d += (b ^ (a | ~c)) + k[15] - 30611744 | 0;
+        d  = (d << 10 | d >>> 22) + a | 0;
+        c += (a ^ (d | ~b)) + k[6] - 1560198380 | 0;
+        c  = (c << 15 | c >>> 17) + d | 0;
+        b += (d ^ (c | ~a)) + k[13] + 1309151649 | 0;
+        b  = (b << 21 |b >>> 11) + c | 0;
+        a += (c ^ (b | ~d)) + k[4] - 145523070 | 0;
+        a  = (a << 6 | a >>> 26) + b | 0;
+        d += (b ^ (a | ~c)) + k[11] - 1120210379 | 0;
+        d  = (d << 10 | d >>> 22) + a | 0;
+        c += (a ^ (d | ~b)) + k[2] + 718787259 | 0;
+        c  = (c << 15 | c >>> 17) + d | 0;
+        b += (d ^ (c | ~a)) + k[9] - 343485551 | 0;
+        b  = (b << 21 | b >>> 11) + c | 0;
+
+        x[0] = a + x[0] | 0;
+        x[1] = b + x[1] | 0;
+        x[2] = c + x[2] | 0;
+        x[3] = d + x[3] | 0;
+    }
+
+    function md5blk(s) {
+        var md5blks = [],
+            i; /* Andy King said do it this way. */
+
+        for (i = 0; i < 64; i += 4) {
+            md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+        }
+        return md5blks;
+    }
+
+    function md5blk_array(a) {
+        var md5blks = [],
+            i; /* Andy King said do it this way. */
+
+        for (i = 0; i < 64; i += 4) {
+            md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
+        }
+        return md5blks;
+    }
+
+    function md51(s) {
+        var n = s.length,
+            state = [1732584193, -271733879, -1732584194, 271733878],
+            i,
+            length,
+            tail,
+            tmp,
+            lo,
+            hi;
+
+        for (i = 64; i <= n; i += 64) {
+            md5cycle(state, md5blk(s.substring(i - 64, i)));
+        }
+        s = s.substring(i - 64);
+        length = s.length;
+        tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        for (i = 0; i < length; i += 1) {
+            tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+        }
+        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+        if (i > 55) {
+            md5cycle(state, tail);
+            for (i = 0; i < 16; i += 1) {
+                tail[i] = 0;
+            }
+        }
+
+        // Beware that the final length might not fit in 32 bits so we take care of that
+        tmp = n * 8;
+        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+        lo = parseInt(tmp[2], 16);
+        hi = parseInt(tmp[1], 16) || 0;
+
+        tail[14] = lo;
+        tail[15] = hi;
+
+        md5cycle(state, tail);
+        return state;
+    }
+
+    function md51_array(a) {
+        var n = a.length,
+            state = [1732584193, -271733879, -1732584194, 271733878],
+            i,
+            length,
+            tail,
+            tmp,
+            lo,
+            hi;
+
+        for (i = 64; i <= n; i += 64) {
+            md5cycle(state, md5blk_array(a.subarray(i - 64, i)));
+        }
+
+        // Not sure if it is a bug, however IE10 will always produce a sub array of length 1
+        // containing the last element of the parent array if the sub array specified starts
+        // beyond the length of the parent array - weird.
+        // https://connect.microsoft.com/IE/feedback/details/771452/typed-array-subarray-issue
+        a = (i - 64) < n ? a.subarray(i - 64) : new Uint8Array(0);
+
+        length = a.length;
+        tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        for (i = 0; i < length; i += 1) {
+            tail[i >> 2] |= a[i] << ((i % 4) << 3);
+        }
+
+        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+        if (i > 55) {
+            md5cycle(state, tail);
+            for (i = 0; i < 16; i += 1) {
+                tail[i] = 0;
+            }
+        }
+
+        // Beware that the final length might not fit in 32 bits so we take care of that
+        tmp = n * 8;
+        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+        lo = parseInt(tmp[2], 16);
+        hi = parseInt(tmp[1], 16) || 0;
+
+        tail[14] = lo;
+        tail[15] = hi;
+
+        md5cycle(state, tail);
+
+        return state;
+    }
+
+    function rhex(n) {
+        var s = '',
+            j;
+        for (j = 0; j < 4; j += 1) {
+            s += hex_chr[(n >> (j * 8 + 4)) & 0x0F] + hex_chr[(n >> (j * 8)) & 0x0F];
+        }
+        return s;
+    }
+
+    function hex(x) {
+        var i;
+        for (i = 0; i < x.length; i += 1) {
+            x[i] = rhex(x[i]);
+        }
+        return x.join('');
+    }
+
+    // In some cases the fast add32 function cannot be used..
+    if (hex(md51('hello')) !== '5d41402abc4b2a76b9719d911017c592') {
+        add32 = function (x, y) {
+            var lsw = (x & 0xFFFF) + (y & 0xFFFF),
+                msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+            return (msw << 16) | (lsw & 0xFFFF);
+        };
+    }
+
+    // ---------------------------------------------------
+
+    /**
+     * ArrayBuffer slice polyfill.
+     *
+     * @see https://github.com/ttaubert/node-arraybuffer-slice
+     */
+
+    if (typeof ArrayBuffer !== 'undefined' && !ArrayBuffer.prototype.slice) {
+        (function () {
+            function clamp(val, length) {
+                val = (val | 0) || 0;
+
+                if (val < 0) {
+                    return Math.max(val + length, 0);
+                }
+
+                return Math.min(val, length);
+            }
+
+            ArrayBuffer.prototype.slice = function (from, to) {
+                var length = this.byteLength,
+                    begin = clamp(from, length),
+                    end = length,
+                    num,
+                    target,
+                    targetArray,
+                    sourceArray;
+
+                if (to !== undefined) {
+                    end = clamp(to, length);
+                }
+
+                if (begin > end) {
+                    return new ArrayBuffer(0);
+                }
+
+                num = end - begin;
+                target = new ArrayBuffer(num);
+                targetArray = new Uint8Array(target);
+
+                sourceArray = new Uint8Array(this, begin, num);
+                targetArray.set(sourceArray);
+
+                return target;
+            };
+        })();
+    }
+
+    // ---------------------------------------------------
+
+    /**
+     * Helpers.
+     */
+
+    function toUtf8(str) {
+        if (/[\u0080-\uFFFF]/.test(str)) {
+            str = unescape(encodeURIComponent(str));
+        }
+
+        return str;
+    }
+
+    function utf8Str2ArrayBuffer(str, returnUInt8Array) {
+        var length = str.length,
+           buff = new ArrayBuffer(length),
+           arr = new Uint8Array(buff),
+           i;
+
+        for (i = 0; i < length; i += 1) {
+            arr[i] = str.charCodeAt(i);
+        }
+
+        return returnUInt8Array ? arr : buff;
+    }
+
+    function arrayBuffer2Utf8Str(buff) {
+        return String.fromCharCode.apply(null, new Uint8Array(buff));
+    }
+
+    function concatenateArrayBuffers(first, second, returnUInt8Array) {
+        var result = new Uint8Array(first.byteLength + second.byteLength);
+
+        result.set(new Uint8Array(first));
+        result.set(new Uint8Array(second), first.byteLength);
+
+        return returnUInt8Array ? result : result.buffer;
+    }
+
+    function hexToBinaryString(hex) {
+        var bytes = [],
+            length = hex.length,
+            x;
+
+        for (x = 0; x < length - 1; x += 2) {
+            bytes.push(parseInt(hex.substr(x, 2), 16));
+        }
+
+        return String.fromCharCode.apply(String, bytes);
+    }
+
+    // ---------------------------------------------------
+
+    /**
+     * SparkMD5 OOP implementation.
+     *
+     * Use this class to perform an incremental md5, otherwise use the
+     * static methods instead.
+     */
+
+    function SparkMD5() {
+        // call reset to init the instance
+        this.reset();
+    }
+
+    /**
+     * Appends a string.
+     * A conversion will be applied if an utf8 string is detected.
+     *
+     * @param {String} str The string to be appended
+     *
+     * @return {SparkMD5} The instance itself
+     */
+    SparkMD5.prototype.append = function (str) {
+        // Converts the string to utf8 bytes if necessary
+        // Then append as binary
+        this.appendBinary(toUtf8(str));
+
+        return this;
+    };
+
+    /**
+     * Appends a binary string.
+     *
+     * @param {String} contents The binary string to be appended
+     *
+     * @return {SparkMD5} The instance itself
+     */
+    SparkMD5.prototype.appendBinary = function (contents) {
+        this._buff += contents;
+        this._length += contents.length;
+
+        var length = this._buff.length,
+            i;
+
+        for (i = 64; i <= length; i += 64) {
+            md5cycle(this._hash, md5blk(this._buff.substring(i - 64, i)));
+        }
+
+        this._buff = this._buff.substring(i - 64);
+
+        return this;
+    };
+
+    /**
+     * Finishes the incremental computation, reseting the internal state and
+     * returning the result.
+     *
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */
+    SparkMD5.prototype.end = function (raw) {
+        var buff = this._buff,
+            length = buff.length,
+            i,
+            tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ret;
+
+        for (i = 0; i < length; i += 1) {
+            tail[i >> 2] |= buff.charCodeAt(i) << ((i % 4) << 3);
+        }
+
+        this._finish(tail, length);
+        ret = hex(this._hash);
+
+        if (raw) {
+            ret = hexToBinaryString(ret);
+        }
+
+        this.reset();
+
+        return ret;
+    };
+
+    /**
+     * Resets the internal state of the computation.
+     *
+     * @return {SparkMD5} The instance itself
+     */
+    SparkMD5.prototype.reset = function () {
+        this._buff = '';
+        this._length = 0;
+        this._hash = [1732584193, -271733879, -1732584194, 271733878];
+
+        return this;
+    };
+
+    /**
+     * Gets the internal state of the computation.
+     *
+     * @return {Object} The state
+     */
+    SparkMD5.prototype.getState = function () {
+        return {
+            buff: this._buff,
+            length: this._length,
+            hash: this._hash.slice()
+        };
+    };
+
+    /**
+     * Gets the internal state of the computation.
+     *
+     * @param {Object} state The state
+     *
+     * @return {SparkMD5} The instance itself
+     */
+    SparkMD5.prototype.setState = function (state) {
+        this._buff = state.buff;
+        this._length = state.length;
+        this._hash = state.hash;
+
+        return this;
+    };
+
+    /**
+     * Releases memory used by the incremental buffer and other additional
+     * resources. If you plan to use the instance again, use reset instead.
+     */
+    SparkMD5.prototype.destroy = function () {
+        delete this._hash;
+        delete this._buff;
+        delete this._length;
+    };
+
+    /**
+     * Finish the final calculation based on the tail.
+     *
+     * @param {Array}  tail   The tail (will be modified)
+     * @param {Number} length The length of the remaining buffer
+     */
+    SparkMD5.prototype._finish = function (tail, length) {
+        var i = length,
+            tmp,
+            lo,
+            hi;
+
+        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+        if (i > 55) {
+            md5cycle(this._hash, tail);
+            for (i = 0; i < 16; i += 1) {
+                tail[i] = 0;
+            }
+        }
+
+        // Do the final computation based on the tail and length
+        // Beware that the final length may not fit in 32 bits so we take care of that
+        tmp = this._length * 8;
+        tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+        lo = parseInt(tmp[2], 16);
+        hi = parseInt(tmp[1], 16) || 0;
+
+        tail[14] = lo;
+        tail[15] = hi;
+        md5cycle(this._hash, tail);
+    };
+
+    /**
+     * Performs the md5 hash on a string.
+     * A conversion will be applied if utf8 string is detected.
+     *
+     * @param {String}  str The string
+     * @param {Boolean} [raw] True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */
+    SparkMD5.hash = function (str, raw) {
+        // Converts the string to utf8 bytes if necessary
+        // Then compute it using the binary function
+        return SparkMD5.hashBinary(toUtf8(str), raw);
+    };
+
+    /**
+     * Performs the md5 hash on a binary string.
+     *
+     * @param {String}  content The binary string
+     * @param {Boolean} [raw]     True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */
+    SparkMD5.hashBinary = function (content, raw) {
+        var hash = md51(content),
+            ret = hex(hash);
+
+        return raw ? hexToBinaryString(ret) : ret;
+    };
+
+    // ---------------------------------------------------
+
+    /**
+     * SparkMD5 OOP implementation for array buffers.
+     *
+     * Use this class to perform an incremental md5 ONLY for array buffers.
+     */
+    SparkMD5.ArrayBuffer = function () {
+        // call reset to init the instance
+        this.reset();
+    };
+
+    /**
+     * Appends an array buffer.
+     *
+     * @param {ArrayBuffer} arr The array to be appended
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */
+    SparkMD5.ArrayBuffer.prototype.append = function (arr) {
+        var buff = concatenateArrayBuffers(this._buff.buffer, arr, true),
+            length = buff.length,
+            i;
+
+        this._length += arr.byteLength;
+
+        for (i = 64; i <= length; i += 64) {
+            md5cycle(this._hash, md5blk_array(buff.subarray(i - 64, i)));
+        }
+
+        this._buff = (i - 64) < length ? new Uint8Array(buff.buffer.slice(i - 64)) : new Uint8Array(0);
+
+        return this;
+    };
+
+    /**
+     * Finishes the incremental computation, reseting the internal state and
+     * returning the result.
+     *
+     * @param {Boolean} raw True to get the raw string, false to get the hex string
+     *
+     * @return {String} The result
+     */
+    SparkMD5.ArrayBuffer.prototype.end = function (raw) {
+        var buff = this._buff,
+            length = buff.length,
+            tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            i,
+            ret;
+
+        for (i = 0; i < length; i += 1) {
+            tail[i >> 2] |= buff[i] << ((i % 4) << 3);
+        }
+
+        this._finish(tail, length);
+        ret = hex(this._hash);
+
+        if (raw) {
+            ret = hexToBinaryString(ret);
+        }
+
+        this.reset();
+
+        return ret;
+    };
+
+    /**
+     * Resets the internal state of the computation.
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */
+    SparkMD5.ArrayBuffer.prototype.reset = function () {
+        this._buff = new Uint8Array(0);
+        this._length = 0;
+        this._hash = [1732584193, -271733879, -1732584194, 271733878];
+
+        return this;
+    };
+
+    /**
+     * Gets the internal state of the computation.
+     *
+     * @return {Object} The state
+     */
+    SparkMD5.ArrayBuffer.prototype.getState = function () {
+        var state = SparkMD5.prototype.getState.call(this);
+
+        // Convert buffer to a string
+        state.buff = arrayBuffer2Utf8Str(state.buff);
+
+        return state;
+    };
+
+    /**
+     * Gets the internal state of the computation.
+     *
+     * @param {Object} state The state
+     *
+     * @return {SparkMD5.ArrayBuffer} The instance itself
+     */
+    SparkMD5.ArrayBuffer.prototype.setState = function (state) {
+        // Convert string to buffer
+        state.buff = utf8Str2ArrayBuffer(state.buff, true);
+
+        return SparkMD5.prototype.setState.call(this, state);
+    };
+
+    SparkMD5.ArrayBuffer.prototype.destroy = SparkMD5.prototype.destroy;
+
+    SparkMD5.ArrayBuffer.prototype._finish = SparkMD5.prototype._finish;
+
+    /**
+     * Performs the md5 hash on an array buffer.
+     *
+     * @param {ArrayBuffer} arr The array buffer
+     * @param {Boolean}     [raw] True to get the raw string, false to get the hex one
+     *
+     * @return {String} The result
+     */
+    SparkMD5.ArrayBuffer.hash = function (arr, raw) {
+        var hash = md51_array(new Uint8Array(arr)),
+            ret = hex(hash);
+
+        return raw ? hexToBinaryString(ret) : ret;
+    };
+
+    return SparkMD5;
+}));
+
+
+/***/ }),
+
+/***/ "6f28":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Stringify/parse functions that don't operate
+ * recursively, so they avoid call stack exceeded
+ * errors.
+ */
+exports.stringify = function stringify(input) {
+  var queue = [];
+  queue.push({obj: input});
+
+  var res = '';
+  var next, obj, prefix, val, i, arrayPrefix, keys, k, key, value, objPrefix;
+  while ((next = queue.pop())) {
+    obj = next.obj;
+    prefix = next.prefix || '';
+    val = next.val || '';
+    res += prefix;
+    if (val) {
+      res += val;
+    } else if (typeof obj !== 'object') {
+      res += typeof obj === 'undefined' ? null : JSON.stringify(obj);
+    } else if (obj === null) {
+      res += 'null';
+    } else if (Array.isArray(obj)) {
+      queue.push({val: ']'});
+      for (i = obj.length - 1; i >= 0; i--) {
+        arrayPrefix = i === 0 ? '' : ',';
+        queue.push({obj: obj[i], prefix: arrayPrefix});
+      }
+      queue.push({val: '['});
+    } else { // object
+      keys = [];
+      for (k in obj) {
+        if (obj.hasOwnProperty(k)) {
+          keys.push(k);
+        }
+      }
+      queue.push({val: '}'});
+      for (i = keys.length - 1; i >= 0; i--) {
+        key = keys[i];
+        value = obj[key];
+        objPrefix = (i > 0 ? ',' : '');
+        objPrefix += JSON.stringify(key) + ':';
+        queue.push({obj: value, prefix: objPrefix});
+      }
+      queue.push({val: '{'});
+    }
+  }
+  return res;
+};
+
+// Convenience function for the parse function.
+// This pop function is basically copied from
+// pouchCollate.parseIndexableString
+function pop(obj, stack, metaStack) {
+  var lastMetaElement = metaStack[metaStack.length - 1];
+  if (obj === lastMetaElement.element) {
+    // popping a meta-element, e.g. an object whose value is another object
+    metaStack.pop();
+    lastMetaElement = metaStack[metaStack.length - 1];
+  }
+  var element = lastMetaElement.element;
+  var lastElementIndex = lastMetaElement.index;
+  if (Array.isArray(element)) {
+    element.push(obj);
+  } else if (lastElementIndex === stack.length - 2) { // obj with key+value
+    var key = stack.pop();
+    element[key] = obj;
+  } else {
+    stack.push(obj); // obj with key only
+  }
+}
+
+exports.parse = function (str) {
+  var stack = [];
+  var metaStack = []; // stack for arrays and objects
+  var i = 0;
+  var collationIndex,parsedNum,numChar;
+  var parsedString,lastCh,numConsecutiveSlashes,ch;
+  var arrayElement, objElement;
+  while (true) {
+    collationIndex = str[i++];
+    if (collationIndex === '}' ||
+        collationIndex === ']' ||
+        typeof collationIndex === 'undefined') {
+      if (stack.length === 1) {
+        return stack.pop();
+      } else {
+        pop(stack.pop(), stack, metaStack);
+        continue;
+      }
+    }
+    switch (collationIndex) {
+      case ' ':
+      case '\t':
+      case '\n':
+      case ':':
+      case ',':
+        break;
+      case 'n':
+        i += 3; // 'ull'
+        pop(null, stack, metaStack);
+        break;
+      case 't':
+        i += 3; // 'rue'
+        pop(true, stack, metaStack);
+        break;
+      case 'f':
+        i += 4; // 'alse'
+        pop(false, stack, metaStack);
+        break;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+      case '-':
+        parsedNum = '';
+        i--;
+        while (true) {
+          numChar = str[i++];
+          if (/[\d\.\-e\+]/.test(numChar)) {
+            parsedNum += numChar;
+          } else {
+            i--;
+            break;
+          }
+        }
+        pop(parseFloat(parsedNum), stack, metaStack);
+        break;
+      case '"':
+        parsedString = '';
+        lastCh = void 0;
+        numConsecutiveSlashes = 0;
+        while (true) {
+          ch = str[i++];
+          if (ch !== '"' || (lastCh === '\\' &&
+              numConsecutiveSlashes % 2 === 1)) {
+            parsedString += ch;
+            lastCh = ch;
+            if (lastCh === '\\') {
+              numConsecutiveSlashes++;
+            } else {
+              numConsecutiveSlashes = 0;
+            }
+          } else {
+            break;
+          }
+        }
+        pop(JSON.parse('"' + parsedString + '"'), stack, metaStack);
+        break;
+      case '[':
+        arrayElement = { element: [], index: stack.length };
+        stack.push(arrayElement.element);
+        metaStack.push(arrayElement);
+        break;
+      case '{':
+        objElement = { element: {}, index: stack.length };
+        stack.push(objElement.element);
+        metaStack.push(objElement);
+        break;
+      default:
+        throw new Error(
+          'unexpectedly reached end of input: ' + collationIndex);
+    }
+  }
+};
+
+
+/***/ }),
+
+/***/ "714a":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var types = [
+  __webpack_require__(0),
+  __webpack_require__("63d7"),
+  __webpack_require__("06a1"),
+  __webpack_require__("cd55"),
+  __webpack_require__("856c"),
+  __webpack_require__("e2a9")
+];
+var draining;
+var currentQueue;
+var queueIndex = -1;
+var queue = [];
+var scheduled = false;
+function cleanUpNextTick() {
+  if (!draining || !currentQueue) {
+    return;
+  }
+  draining = false;
+  if (currentQueue.length) {
+    queue = currentQueue.concat(queue);
+  } else {
+    queueIndex = -1;
+  }
+  if (queue.length) {
+    nextTick();
+  }
+}
+
+//named nextTick for less confusing stack traces
+function nextTick() {
+  if (draining) {
+    return;
+  }
+  scheduled = false;
+  draining = true;
+  var len = queue.length;
+  var timeout = setTimeout(cleanUpNextTick);
+  while (len) {
+    currentQueue = queue;
+    queue = [];
+    while (currentQueue && ++queueIndex < len) {
+      currentQueue[queueIndex].run();
+    }
+    queueIndex = -1;
+    len = queue.length;
+  }
+  currentQueue = null;
+  queueIndex = -1;
+  draining = false;
+  clearTimeout(timeout);
+}
+var scheduleDrain;
+var i = -1;
+var len = types.length;
+while (++i < len) {
+  if (types[i] && types[i].test && types[i].test()) {
+    scheduleDrain = types[i].install(nextTick);
+    break;
+  }
+}
+// v8 likes predictible objects
+function Item(fun, array) {
+  this.fun = fun;
+  this.array = array;
+}
+Item.prototype.run = function () {
+  var fun = this.fun;
+  var array = this.array;
+  switch (array.length) {
+  case 0:
+    return fun();
+  case 1:
+    return fun(array[0]);
+  case 2:
+    return fun(array[0], array[1]);
+  case 3:
+    return fun(array[0], array[1], array[2]);
+  default:
+    return fun.apply(null, array);
+  }
+
+};
+module.exports = immediate;
+function immediate(task) {
+  var args = new Array(arguments.length - 1);
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      args[i - 1] = arguments[i];
+    }
+  }
+  queue.push(new Item(task, args));
+  if (!scheduled && !draining) {
+    scheduled = true;
+    scheduleDrain();
+  }
+}
+
+
+/***/ }),
+
+/***/ "856c":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+exports.test = function () {
+  return 'document' in global && 'onreadystatechange' in global.document.createElement('script');
+};
+
+exports.install = function (handle) {
+  return function () {
+
+    // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+    // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+    var scriptEl = global.document.createElement('script');
+    scriptEl.onreadystatechange = function () {
+      handle();
+
+      scriptEl.onreadystatechange = null;
+      scriptEl.parentNode.removeChild(scriptEl);
+      scriptEl = null;
+    };
+    global.document.documentElement.appendChild(scriptEl);
+
+    return handle;
+  };
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
+
+/***/ }),
+
+/***/ "8875":
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// addapted from the document.currentScript polyfill by Adam Miller
+// MIT license
+// source: https://github.com/amiller-gh/currentScript-polyfill
+
+// added support for Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1620505
+
+(function (root, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else {}
+}(typeof self !== 'undefined' ? self : this, function () {
+  function getCurrentScript () {
+    var descriptor = Object.getOwnPropertyDescriptor(document, 'currentScript')
+    // for chrome
+    if (!descriptor && 'currentScript' in document && document.currentScript) {
+      return document.currentScript
+    }
+
+    // for other browsers with native support for currentScript
+    if (descriptor && descriptor.get !== getCurrentScript && document.currentScript) {
+      return document.currentScript
+    }
+  
+    // IE 8-10 support script readyState
+    // IE 11+ & Firefox support stack trace
+    try {
+      throw new Error();
+    }
+    catch (err) {
+      // Find the second match for the "at" string to get file src url from stack.
+      var ieStackRegExp = /.*at [^(]*\((.*):(.+):(.+)\)$/ig,
+        ffStackRegExp = /@([^@]*):(\d+):(\d+)\s*$/ig,
+        stackDetails = ieStackRegExp.exec(err.stack) || ffStackRegExp.exec(err.stack),
+        scriptLocation = (stackDetails && stackDetails[1]) || false,
+        line = (stackDetails && stackDetails[2]) || false,
+        currentLocation = document.location.href.replace(document.location.hash, ''),
+        pageSource,
+        inlineScriptSourceRegExp,
+        inlineScriptSource,
+        scripts = document.getElementsByTagName('script'); // Live NodeList collection
+  
+      if (scriptLocation === currentLocation) {
+        pageSource = document.documentElement.outerHTML;
+        inlineScriptSourceRegExp = new RegExp('(?:[^\\n]+?\\n){0,' + (line - 2) + '}[^<]*<script>([\\d\\D]*?)<\\/script>[\\d\\D]*', 'i');
+        inlineScriptSource = pageSource.replace(inlineScriptSourceRegExp, '$1').trim();
+      }
+  
+      for (var i = 0; i < scripts.length; i++) {
+        // If ready state is interactive, return the script tag
+        if (scripts[i].readyState === 'interactive') {
+          return scripts[i];
+        }
+  
+        // If src matches, return the script tag
+        if (scripts[i].src === scriptLocation) {
+          return scripts[i];
+        }
+  
+        // If inline source matches, return the script tag
+        if (
+          scriptLocation === currentLocation &&
+          scripts[i].innerHTML &&
+          scripts[i].innerHTML.trim() === inlineScriptSource
+        ) {
+          return scripts[i];
+        }
+      }
+  
+      // If no match, return null
+      return null;
+    }
+  };
+
+  return getCurrentScript
+}));
+
+
+/***/ }),
+
+/***/ "9152":
+/***/ (function(module, exports) {
+
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = (nBytes * 8) - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = ((value * c) - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
     }
   }
 
-  return buf || bytesToUuid(rnds);
-}
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
 
-module.exports = v4;
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
 
 
 /***/ }),
@@ -14191,133 +13890,29 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "c95f":
-/***/ (function(module, exports) {
+/***/ "cd55":
+/***/ (function(module, exports, __webpack_require__) {
 
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      ctor.prototype = Object.create(superCtor.prototype, {
-        constructor: {
-          value: ctor,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      })
-    }
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      var TempCtor = function () {}
-      TempCtor.prototype = superCtor.prototype
-      ctor.prototype = new TempCtor()
-      ctor.prototype.constructor = ctor
-    }
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+exports.test = function () {
+  if (global.setImmediate) {
+    // we can only get here in IE10
+    // which doesn't handel postMessage well
+    return false;
   }
-}
+  return typeof global.MessageChannel !== 'undefined';
+};
 
-
-/***/ }),
-
-/***/ "ceee":
-/***/ (function(module, exports) {
-
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      ctor.prototype = Object.create(superCtor.prototype, {
-        constructor: {
-          value: ctor,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      })
-    }
+exports.install = function (func) {
+  var channel = new global.MessageChannel();
+  channel.port1.onmessage = func;
+  return function () {
+    channel.port2.postMessage(0);
   };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    if (superCtor) {
-      ctor.super_ = superCtor
-      var TempCtor = function () {}
-      TempCtor.prototype = superCtor.prototype
-      ctor.prototype = new TempCtor()
-      ctor.prototype.constructor = ctor
-    }
-  }
-}
-
-
-/***/ }),
-
-/***/ "d203":
-/***/ (function(module, exports) {
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([bth[buf[i++]], bth[buf[i++]], 
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]]]).join('');
-}
-
-module.exports = bytesToUuid;
-
-
-/***/ }),
-
-/***/ "dba1":
-/***/ (function(module, exports) {
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex;
-  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-  return ([bth[buf[i++]], bth[buf[i++]], 
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]], '-',
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]],
-	bth[buf[i++]], bth[buf[i++]]]).join('');
-}
-
-module.exports = bytesToUuid;
-
+};
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
 
 /***/ }),
 
@@ -14344,84 +13939,6 @@ function argsArray(fun) {
     }
   };
 }
-
-/***/ }),
-
-/***/ "de3d":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-var Mutation = global.MutationObserver || global.WebKitMutationObserver;
-
-var scheduleDrain;
-
-{
-  if (Mutation) {
-    var called = 0;
-    var observer = new Mutation(nextTick);
-    var element = global.document.createTextNode('');
-    observer.observe(element, {
-      characterData: true
-    });
-    scheduleDrain = function () {
-      element.data = (called = ++called % 2);
-    };
-  } else if (!global.setImmediate && typeof global.MessageChannel !== 'undefined') {
-    var channel = new global.MessageChannel();
-    channel.port1.onmessage = nextTick;
-    scheduleDrain = function () {
-      channel.port2.postMessage(0);
-    };
-  } else if ('document' in global && 'onreadystatechange' in global.document.createElement('script')) {
-    scheduleDrain = function () {
-
-      // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-      // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-      var scriptEl = global.document.createElement('script');
-      scriptEl.onreadystatechange = function () {
-        nextTick();
-
-        scriptEl.onreadystatechange = null;
-        scriptEl.parentNode.removeChild(scriptEl);
-        scriptEl = null;
-      };
-      global.document.documentElement.appendChild(scriptEl);
-    };
-  } else {
-    scheduleDrain = function () {
-      setTimeout(nextTick, 0);
-    };
-  }
-}
-
-var draining;
-var queue = [];
-//named nextTick for less confusing stack traces
-function nextTick() {
-  draining = true;
-  var i, oldQueue;
-  var len = queue.length;
-  while (len) {
-    oldQueue = queue;
-    queue = [];
-    i = -1;
-    while (++i < len) {
-      oldQueue[i]();
-    }
-    len = queue.length;
-  }
-  draining = false;
-}
-
-module.exports = immediate;
-function immediate(task) {
-  if (queue.push(task) === 1 && !draining) {
-    scheduleDrain();
-  }
-}
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
 
 /***/ }),
 
@@ -14735,6 +14252,23 @@ var substr = 'ab'.substr(-1) === 'b'
 
 /***/ }),
 
+/***/ "e2a9":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.test = function () {
+  return true;
+};
+
+exports.install = function (t) {
+  return function () {
+    setTimeout(t, 0);
+  };
+};
+
+/***/ }),
+
 /***/ "e3db":
 /***/ (function(module, exports) {
 
@@ -14747,138 +14281,76 @@ module.exports = Array.isArray || function (arr) {
 
 /***/ }),
 
-/***/ "e4b8":
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "ec26":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var v1 = __webpack_require__("932d");
-var v4 = __webpack_require__("f1df");
+"use strict";
 
-var uuid = v4;
-uuid.v1 = v1;
-uuid.v4 = v4;
+// CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/rng.js
+// Unique ID creation requires a high quality random # generator. In the browser we therefore
+// require the crypto API and do not support built-in fallback to lower quality random number
+// generators (like Math.random()).
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
+// find the complete implementation of crypto (msCrypto) on IE11.
+var getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues === 'function' && msCrypto.getRandomValues.bind(msCrypto);
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+  }
 
-module.exports = uuid;
+  return getRandomValues(rnds8);
+}
+// CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/bytesToUuid.js
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+
+for (var bytesToUuid_i = 0; bytesToUuid_i < 256; ++bytesToUuid_i) {
+  byteToHex.push((bytesToUuid_i + 0x100).toString(16).substr(1));
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex; // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+
+  return (bth[buf[i + 0]] + bth[buf[i + 1]] + bth[buf[i + 2]] + bth[buf[i + 3]] + '-' + bth[buf[i + 4]] + bth[buf[i + 5]] + '-' + bth[buf[i + 6]] + bth[buf[i + 7]] + '-' + bth[buf[i + 8]] + bth[buf[i + 9]] + '-' + bth[buf[i + 10]] + bth[buf[i + 11]] + bth[buf[i + 12]] + bth[buf[i + 13]] + bth[buf[i + 14]] + bth[buf[i + 15]]).toLowerCase();
+}
+
+/* harmony default export */ var esm_browser_bytesToUuid = (bytesToUuid);
+// CONCATENATED MODULE: ./node_modules/uuid/dist/esm-browser/v4.js
 
 
-/***/ }),
-
-/***/ "f1df":
-/***/ (function(module, exports, __webpack_require__) {
-
-var rng = __webpack_require__("f8c1");
-var bytesToUuid = __webpack_require__("dba1");
 
 function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof(options) == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
+  if (typeof options === 'string') {
+    buf = options === 'binary' ? new Uint8Array(16) : null;
     options = null;
   }
+
   options = options || {};
+  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
 
-  var rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
 
-  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[6] = (rnds[6] & 0x0f) | 0x40;
-  rnds[8] = (rnds[8] & 0x3f) | 0x80;
-
-  // Copy bytes to buffer, if provided
   if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
+    var start = offset || 0;
 
-  return buf || bytesToUuid(rnds);
-}
-
-module.exports = v4;
-
-
-/***/ }),
-
-/***/ "f6fd":
-/***/ (function(module, exports) {
-
-// document.currentScript polyfill by Adam Miller
-
-// MIT license
-
-(function(document){
-  var currentScript = "currentScript",
-      scripts = document.getElementsByTagName('script'); // Live NodeList collection
-
-  // If browser needs currentScript polyfill, add get currentScript() to the document object
-  if (!(currentScript in document)) {
-    Object.defineProperty(document, currentScript, {
-      get: function(){
-
-        // IE 6-10 supports script readyState
-        // IE 10+ support stack trace
-        try { throw new Error(); }
-        catch (err) {
-
-          // Find the second match for the "at" string to get file src url from stack.
-          // Specifically works with the format of stack traces in IE.
-          var i, res = ((/.*at [^\(]*\((.*):.+:.+\)$/ig).exec(err.stack) || [false])[1];
-
-          // For all scripts on the page, if src matches or if ready state is interactive, return the script tag
-          for(i in scripts){
-            if(scripts[i].src == res || scripts[i].readyState == "interactive"){
-              return scripts[i];
-            }
-          }
-
-          // If no match, return null
-          return null;
-        }
-      }
-    });
-  }
-})(document);
-
-
-/***/ }),
-
-/***/ "f8c1":
-/***/ (function(module, exports) {
-
-// Unique ID creation requires a high quality random # generator.  In the
-// browser this is a little complicated due to unknown quality of Math.random()
-// and inconsistent support for the `crypto` API.  We do the best we can via
-// feature-detection
-
-// getRandomValues needs to be invoked in a context where "this" is a Crypto
-// implementation. Also, find the complete implementation of crypto on IE11.
-var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
-if (getRandomValues) {
-  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
-  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-  module.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  // Math.random()-based (RNG)
-  //
-  // If all else fails, use Math.random().  It's fast, but is of unspecified
-  // quality.
-  var rnds = new Array(16);
-
-  module.exports = function mathRNG() {
-    for (var i = 0, r; i < 16; i++) {
-      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
-      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    for (var i = 0; i < 16; ++i) {
+      buf[start + i] = rnds[i];
     }
 
-    return rnds;
-  };
+    return buf;
+  }
+
+  return esm_browser_bytesToUuid(rnds);
 }
 
+/* harmony default export */ var esm_browser_v4 = __webpack_exports__["a"] = (v4);
 
 /***/ }),
 
@@ -14942,6 +14414,7 @@ function EventEmitter() {
   EventEmitter.init.call(this);
 }
 module.exports = EventEmitter;
+module.exports.once = once;
 
 // Backwards-compat with node 0.10.x
 EventEmitter.EventEmitter = EventEmitter;
@@ -15333,6 +14806,35 @@ function unwrapListeners(arr) {
   return ret;
 }
 
+function once(emitter, name) {
+  return new Promise(function (resolve, reject) {
+    function eventListener() {
+      if (errorListener !== undefined) {
+        emitter.removeListener('error', errorListener);
+      }
+      resolve([].slice.call(arguments));
+    };
+    var errorListener;
+
+    // Adding an error listener is not optional because
+    // if an error is thrown on an event emitter we cannot
+    // guarantee that the actual event we are waiting will
+    // be fired. The result could be a silent way to create
+    // memory or file descriptor leaks, which is something
+    // we should avoid.
+    if (name !== 'error') {
+      errorListener = function errorListener(err) {
+        emitter.removeListener(name, eventListener);
+        reject(err);
+      };
+
+      emitter.once('error', errorListener);
+    }
+
+    emitter.once(name, eventListener);
+  });
+}
+
 
 /***/ }),
 
@@ -15373,13 +14875,20 @@ __webpack_require__.d(__webpack_exports__, "persistent", function() { return /* 
 // This file is imported into lib/wc client bundles.
 
 if (typeof window !== 'undefined') {
+  var currentScript = window.document.currentScript
   if (true) {
-    __webpack_require__("f6fd")
+    var getCurrentScript = __webpack_require__("8875")
+    currentScript = getCurrentScript()
+
+    // for backward compatibility, because previously we directly included the polyfill
+    if (!('currentScript' in document)) {
+      Object.defineProperty(document, 'currentScript', { get: getCurrentScript })
+    }
   }
 
-  var setPublicPath_i
-  if ((setPublicPath_i = window.document.currentScript) && (setPublicPath_i = setPublicPath_i.src.match(/(.+\/)[^/]+\.js(\?.*)?$/))) {
-    __webpack_require__.p = setPublicPath_i[1] // eslint-disable-line
+  var src = currentScript && currentScript.src.match(/(.+\/)[^/]+\.js(\?.*)?$/)
+  if (src) {
+    __webpack_require__.p = src[1] // eslint-disable-line
   }
 }
 
@@ -15389,8 +14898,8 @@ if (typeof window !== 'undefined') {
 // EXTERNAL MODULE: ./node_modules/pouchdb/lib/index-browser.es.js
 var index_browser_es = __webpack_require__("16b2");
 
-// EXTERNAL MODULE: ./node_modules/pouchdb-errors/node_modules/inherits/inherits_browser.js
-var inherits_browser = __webpack_require__("c95f");
+// EXTERNAL MODULE: ./node_modules/inherits/inherits_browser.js
+var inherits_browser = __webpack_require__("3fb5");
 var inherits_browser_default = /*#__PURE__*/__webpack_require__.n(inherits_browser);
 
 // CONCATENATED MODULE: ./node_modules/pouchdb-errors/lib/index.es.js
@@ -15445,9 +14954,10 @@ function createError(error, reason) {
     // inherit error properties from our parent error manually
     // so as to allow proper JSON parsing.
     /* jshint ignore:start */
-    for (var p in error) {
-      if (typeof error[p] !== 'function') {
-        this[p] = error[p];
+    var names = Object.getOwnPropertyNames(error);
+    for (var i = 0, len = names.length; i < len; i++) {
+      if (typeof error[names[i]] !== 'function') {
+        this[names[i]] = error[names[i]];
       }
     }
     /* jshint ignore:end */
@@ -15601,8 +15111,118 @@ var ExportedMap;
 
 
 
-// EXTERNAL MODULE: ./node_modules/pouchdb-binary-utils/lib/index-browser.es.js
-var lib_index_browser_es = __webpack_require__("0f86");
+// CONCATENATED MODULE: ./node_modules/pouchdb-binary-utils/lib/index-browser.es.js
+var thisAtob = function (str) {
+  return atob(str);
+};
+
+var thisBtoa = function (str) {
+  return btoa(str);
+};
+
+// Abstracts constructing a Blob object, so it also works in older
+// browsers that don't support the native Blob constructor (e.g.
+// old QtWebKit versions, Android < 4.4).
+function createBlob(parts, properties) {
+  /* global BlobBuilder,MSBlobBuilder,MozBlobBuilder,WebKitBlobBuilder */
+  parts = parts || [];
+  properties = properties || {};
+  try {
+    return new Blob(parts, properties);
+  } catch (e) {
+    if (e.name !== "TypeError") {
+      throw e;
+    }
+    var Builder = typeof BlobBuilder !== 'undefined' ? BlobBuilder :
+                  typeof MSBlobBuilder !== 'undefined' ? MSBlobBuilder :
+                  typeof MozBlobBuilder !== 'undefined' ? MozBlobBuilder :
+                  WebKitBlobBuilder;
+    var builder = new Builder();
+    for (var i = 0; i < parts.length; i += 1) {
+      builder.append(parts[i]);
+    }
+    return builder.getBlob(properties.type);
+  }
+}
+
+// From http://stackoverflow.com/questions/14967647/ (continues on next line)
+// encode-decode-image-with-base64-breaks-image (2013-04-21)
+function binaryStringToArrayBuffer(bin) {
+  var length = bin.length;
+  var buf = new ArrayBuffer(length);
+  var arr = new Uint8Array(buf);
+  for (var i = 0; i < length; i++) {
+    arr[i] = bin.charCodeAt(i);
+  }
+  return buf;
+}
+
+function binStringToBluffer(binString, type) {
+  return createBlob([binaryStringToArrayBuffer(binString)], {type: type});
+}
+
+function b64ToBluffer(b64, type) {
+  return binStringToBluffer(thisAtob(b64), type);
+}
+
+//Can't find original post, but this is close
+//http://stackoverflow.com/questions/6965107/ (continues on next line)
+//converting-between-strings-and-arraybuffers
+function arrayBufferToBinaryString(buffer) {
+  var binary = '';
+  var bytes = new Uint8Array(buffer);
+  var length = bytes.byteLength;
+  for (var i = 0; i < length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return binary;
+}
+
+// shim for browsers that don't support it
+function readAsBinaryString(blob, callback) {
+  var reader = new FileReader();
+  var hasBinaryString = typeof reader.readAsBinaryString === 'function';
+  reader.onloadend = function (e) {
+    var result = e.target.result || '';
+    if (hasBinaryString) {
+      return callback(result);
+    }
+    callback(arrayBufferToBinaryString(result));
+  };
+  if (hasBinaryString) {
+    reader.readAsBinaryString(blob);
+  } else {
+    reader.readAsArrayBuffer(blob);
+  }
+}
+
+function blobToBinaryString(blobOrBuffer, callback) {
+  readAsBinaryString(blobOrBuffer, function (bin) {
+    callback(bin);
+  });
+}
+
+function blobToBase64(blobOrBuffer, callback) {
+  blobToBinaryString(blobOrBuffer, function (base64) {
+    callback(thisBtoa(base64));
+  });
+}
+
+// simplified API. universal browser support is assumed
+function readAsArrayBuffer(blob, callback) {
+  var reader = new FileReader();
+  reader.onloadend = function (e) {
+    var result = e.target.result || new ArrayBuffer(0);
+    callback(result);
+  };
+  reader.readAsArrayBuffer(blob);
+}
+
+// this is not used in the browser
+function typedBuffer() {
+}
+
+
 
 // CONCATENATED MODULE: ./node_modules/pouchdb-collate/lib/index.es.js
 function pad(str, padWith, upToLength) {
@@ -15988,23 +15608,98 @@ function numToIndexableString(num) {
 var argsarray = __webpack_require__("dd8f");
 var argsarray_default = /*#__PURE__*/__webpack_require__.n(argsarray);
 
-// EXTERNAL MODULE: ./node_modules/pouchdb-utils/node_modules/inherits/inherits_browser.js
-var inherits_inherits_browser = __webpack_require__("ceee");
-var inherits_inherits_browser_default = /*#__PURE__*/__webpack_require__.n(inherits_inherits_browser);
-
-// EXTERNAL MODULE: ./node_modules/immediate/lib/browser.js
-var browser = __webpack_require__("de3d");
-var browser_default = /*#__PURE__*/__webpack_require__.n(browser);
+// EXTERNAL MODULE: ./node_modules/immediate/lib/index.js
+var lib = __webpack_require__("714a");
+var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 
 // EXTERNAL MODULE: ./node_modules/events/events.js
 var events = __webpack_require__("faa1");
+var events_default = /*#__PURE__*/__webpack_require__.n(events);
 
-// EXTERNAL MODULE: ./node_modules/pouchdb-utils/node_modules/uuid/index.js
-var uuid = __webpack_require__("e4b8");
-var uuid_default = /*#__PURE__*/__webpack_require__.n(uuid);
+// EXTERNAL MODULE: ./node_modules/uuid/dist/esm-browser/v4.js + 2 modules
+var v4 = __webpack_require__("ec26");
 
-// EXTERNAL MODULE: ./node_modules/pouchdb-md5/lib/index-browser.es.js
-var pouchdb_md5_lib_index_browser_es = __webpack_require__("1827");
+// EXTERNAL MODULE: ./node_modules/spark-md5/spark-md5.js
+var spark_md5 = __webpack_require__("69a0");
+var spark_md5_default = /*#__PURE__*/__webpack_require__.n(spark_md5);
+
+// CONCATENATED MODULE: ./node_modules/pouchdb-md5/lib/index-browser.es.js
+
+
+
+var setImmediateShim = self.setImmediate || self.setTimeout;
+var MD5_CHUNK_SIZE = 32768;
+
+function rawToBase64(raw) {
+  return thisBtoa(raw);
+}
+
+function sliceBlob(blob, start, end) {
+  if (blob.webkitSlice) {
+    return blob.webkitSlice(start, end);
+  }
+  return blob.slice(start, end);
+}
+
+function appendBlob(buffer, blob, start, end, callback) {
+  if (start > 0 || end < blob.size) {
+    // only slice blob if we really need to
+    blob = sliceBlob(blob, start, end);
+  }
+  readAsArrayBuffer(blob, function (arrayBuffer) {
+    buffer.append(arrayBuffer);
+    callback();
+  });
+}
+
+function appendString(buffer, string, start, end, callback) {
+  if (start > 0 || end < string.length) {
+    // only create a substring if we really need to
+    string = string.substring(start, end);
+  }
+  buffer.appendBinary(string);
+  callback();
+}
+
+function binaryMd5(data, callback) {
+  var inputIsString = typeof data === 'string';
+  var len = inputIsString ? data.length : data.size;
+  var chunkSize = Math.min(MD5_CHUNK_SIZE, len);
+  var chunks = Math.ceil(len / chunkSize);
+  var currentChunk = 0;
+  var buffer = inputIsString ? new spark_md5_default.a() : new spark_md5_default.a.ArrayBuffer();
+
+  var append = inputIsString ? appendString : appendBlob;
+
+  function next() {
+    setImmediateShim(loadNextChunk);
+  }
+
+  function done() {
+    var raw = buffer.end(true);
+    var base64 = rawToBase64(raw);
+    callback(base64);
+    buffer.destroy();
+  }
+
+  function loadNextChunk() {
+    var start = currentChunk * chunkSize;
+    var end = start + chunkSize;
+    currentChunk++;
+    if (currentChunk < chunks) {
+      append(buffer, data, start, end, next);
+    } else {
+      append(buffer, data, start, end, done);
+    }
+  }
+  loadNextChunk();
+}
+
+function stringMd5(string) {
+  return spark_md5_default.a.hash(string);
+}
+
+
 
 // CONCATENATED MODULE: ./node_modules/pouchdb-utils/lib/index-browser.es.js
 
@@ -16367,7 +16062,7 @@ function hasLocalStorage() {
 
 // Custom nextTick() shim for browsers. In node, this will just be process.nextTick(). We
 
-inherits_inherits_browser_default()(Changes, events["EventEmitter"]);
+inherits_browser_default()(Changes, events_default.a);
 
 /* istanbul ignore next */
 function attachBrowserEvents(self) {
@@ -16379,7 +16074,7 @@ function attachBrowserEvents(self) {
 }
 
 function Changes() {
-  events["EventEmitter"].call(this);
+  events_default.a.call(this);
   this._listeners = {};
 
   attachBrowserEvents(this);
@@ -16418,7 +16113,7 @@ Changes.prototype.addListener = function (dbName, id, db, opts) {
       }
     }).on('complete', function () {
       if (inprogress === 'waiting') {
-        browser_default()(eventFunction);
+        lib_default()(eventFunction);
       }
       inprogress = false;
     }).on('error', onError);
@@ -16432,7 +16127,7 @@ Changes.prototype.removeListener = function (dbName, id) {
   if (!(id in this._listeners)) {
     return;
   }
-  events["EventEmitter"].prototype.removeListener.call(this, dbName,
+  events_default.a.prototype.removeListener.call(this, dbName,
     this._listeners[id]);
   delete this._listeners[id];
 };
@@ -16643,7 +16338,7 @@ function isRemote(db) {
 
 function listenerCount(ee, type) {
   return 'listenerCount' in ee ? ee.listenerCount(type) :
-                                 events["EventEmitter"].listenerCount(ee, type);
+                                 events_default.a.listenerCount(ee, type);
 }
 
 function parseDesignDocFunctionName(s) {
@@ -16767,20 +16462,16 @@ function tryAndPut(db, doc, diffFun) {
 function rev(doc, deterministic_revs) {
   var clonedDoc = clone(doc);
   if (!deterministic_revs) {
-    return uuid_default.a.v4().replace(/-/g, '').toLowerCase();
+    return Object(v4["a" /* default */])().replace(/-/g, '').toLowerCase();
   }
 
   delete clonedDoc._rev_tree;
-  return Object(pouchdb_md5_lib_index_browser_es["a" /* stringMd5 */])(JSON.stringify(clonedDoc));
+  return stringMd5(JSON.stringify(clonedDoc));
 }
 
-var index_browser_es_uuid = uuid_default.a.v4;
+var uuid = v4["a" /* default */]; // mimic old import, only v4 is ever used elsewhere
 
 
-
-// EXTERNAL MODULE: ./node_modules/pouchdb-mapreduce-utils/node_modules/inherits/inherits_browser.js
-var node_modules_inherits_inherits_browser = __webpack_require__("9306");
-var node_modules_inherits_inherits_browser_default = /*#__PURE__*/__webpack_require__.n(node_modules_inherits_inherits_browser);
 
 // CONCATENATED MODULE: ./node_modules/pouchdb-mapreduce-utils/lib/index.es.js
 
@@ -16798,7 +16489,7 @@ function QueryParseError(message) {
   } catch (e) {}
 }
 
-node_modules_inherits_inherits_browser_default()(QueryParseError, Error);
+inherits_browser_default()(QueryParseError, Error);
 
 function NotFoundError(message) {
   this.status = 404;
@@ -16810,7 +16501,7 @@ function NotFoundError(message) {
   } catch (e) {}
 }
 
-node_modules_inherits_inherits_browser_default()(NotFoundError, Error);
+inherits_browser_default()(NotFoundError, Error);
 
 function BuiltInError(message) {
   this.status = 500;
@@ -16822,16 +16513,16 @@ function BuiltInError(message) {
   } catch (e) {}
 }
 
-node_modules_inherits_inherits_browser_default()(BuiltInError, Error);
+inherits_browser_default()(BuiltInError, Error);
 
 function promisedCallback(promise, callback) {
   if (callback) {
     promise.then(function (res) {
-      browser_default()(function () {
+      lib_default()(function () {
         callback(null, res);
       });
     }, function (reason) {
-      browser_default()(function () {
+      lib_default()(function () {
         callback(reason);
       });
     });
@@ -16967,7 +16658,7 @@ function createView(sourceDB, viewName, mapFun, reduceFun, temporary, localDocNa
   var promiseForView = sourceDB.info().then(function (info) {
 
     var depDbName = info.db_name + '-mrview-' +
-      (temporary ? 'temp' : Object(pouchdb_md5_lib_index_browser_es["a" /* stringMd5 */])(viewSignature));
+      (temporary ? 'temp' : stringMd5(viewSignature));
 
     // save the view name in the source db so it can be cleaned up if necessary
     // (e.g. when the _design doc is deleted, remove all associated view data)
@@ -17132,7 +16823,7 @@ function createAbstractMapReduce(localDocName, mapper, reducer, ddocValidator) {
       }
       Object.keys(atts).forEach(function (filename) {
         var att = atts[filename];
-        atts[filename].data = Object(lib_index_browser_es["a" /* base64StringToBlobOrBuffer */])(att.data, att.content_type);
+        atts[filename].data = b64ToBluffer(att.data, att.content_type);
       });
     });
   }
@@ -17905,7 +17596,7 @@ function createAbstractMapReduce(localDocName, mapper, reducer, ddocValidator) {
         return createViewPromise.then(function (view) {
           if (opts.stale === 'ok' || opts.stale === 'update_after') {
             if (opts.stale === 'update_after') {
-              browser_default()(function () {
+              lib_default()(function () {
                 updateView(view);
               });
             }
@@ -18685,11 +18376,11 @@ function index_browser_es_callbackify(fun) {
 
 function index_browser_es_promisedCallback(promise, callback) {
   promise.then(function (res) {
-    browser_default()(function () {
+    lib_default()(function () {
       callback(null, res);
     });
   }, function (reason) {
-    browser_default()(function () {
+    lib_default()(function () {
       callback(reason);
     });
   });
@@ -19143,7 +18834,7 @@ function createIndex$1(db, requestDef) {
   // run if required
   var md5;
   function getMd5() {
-    return md5 || (md5 = Object(pouchdb_md5_lib_index_browser_es["a" /* stringMd5 */])(JSON.stringify(requestDef)));
+    return md5 || (md5 = stringMd5(JSON.stringify(requestDef)));
   }
 
   var viewName = requestDef.name || ('idx-' + getMd5());
@@ -19255,6 +18946,11 @@ var COLLATE_LO = null;
 
 // couchdb highest collation value (TODO: well not really, but close enough amirite)
 var COLLATE_HI = {"\uffff": {}};
+
+const SHORT_CIRCUIT_QUERY = {
+  queryOpts: { limit: 0, startkey: COLLATE_HI, endkey: COLLATE_LO },
+  inMemoryFields: [],
+};
 
 // couchdb second-lowest collation value
 
@@ -19407,14 +19103,9 @@ function checkIndexMatches(index, sortOrder, fields, selector) {
 //
 //
 function findMatchingIndexes(selector, userFields, sortOrder, indexes) {
-
-  return indexes.reduce(function (res, index) {
-    var indexMatches = checkIndexMatches(index, sortOrder, userFields, selector);
-    if (indexMatches) {
-      res.push(index);
-    }
-    return res;
-  }, []);
+  return indexes.filter(function (index) {
+    return checkIndexMatches(index, sortOrder, userFields, selector);
+  });
 }
 
 // find the best index, i.e. the one that matches the most fields
@@ -19601,11 +19292,10 @@ function getMultiFieldQueryOpts(selector, index) {
     if (!matcher || !Object.keys(matcher).length) { // fewer fields in user query than in index
       finish(i);
       break;
+    } else if (Object.keys(matcher).some(isNonLogicalMatcher)) { // non-logical are ignored
+      finish(i);
+      break;
     } else if (i > 0) {
-      if (Object.keys(matcher).some(isNonLogicalMatcher)) { // non-logical are ignored
-        finish(i);
-        break;
-      }
       var usingGtlt = (
         '$gt' in matcher || '$gte' in matcher ||
         '$lt' in matcher || '$lte' in matcher);
@@ -19664,6 +19354,21 @@ function getMultiFieldQueryOpts(selector, index) {
   };
 }
 
+function shouldShortCircuit(selector) {
+  // We have a field to select from, but not a valid value
+  // this should result in a short circuited query 
+  // just like the http adapter (couchdb) and mongodb
+  // see tests for issue #7810
+  
+  // @todo Use 'Object.values' when Node.js v6 support is dropped.
+  const values = Object.keys(selector).map(function (key) {
+    return selector[key];
+  });
+  return values.some(function (val) { 
+    return typeof val === 'object' && Object.keys(val).length === 0;
+});
+}
+
 function getDefaultQueryPlan(selector) {
   //using default index, so all fields need to be done in memory
   return {
@@ -19689,6 +19394,10 @@ function planQuery(request, indexes) {
 
   var selector = request.selector;
   var sort = request.sort;
+
+  if (shouldShortCircuit(selector)) {
+    return assign$1({}, SHORT_CIRCUIT_QUERY, { index: indexes[0] });
+  }
 
   var userFieldsRes = getUserFields(selector, sort);
 
@@ -19720,7 +19429,6 @@ function doAllDocs(db, originalOpts) {
 
   // CouchDB responds in weird ways when you provide a non-string to _id;
   // we mimic the behavior for consistency. See issue66 tests for details.
-
   if (opts.descending) {
     if ('endkey' in opts && typeof opts.endkey !== 'string') {
       opts.endkey = '';
@@ -19740,14 +19448,28 @@ function doAllDocs(db, originalOpts) {
     opts.limit = 0;
   }
 
+  if (opts.limit > 0 && opts.indexes_count) {
+    // brute force and quite naive impl.
+    // amp up the limit with the amount of (indexes) design docs
+    // or is this too naive? How about skip?
+    opts.original_limit = opts.limit;
+    opts.limit += opts.indexes_count;
+  }
+
   return db.allDocs(opts)
-  .then(function (res) {
-    // filter out any design docs that _all_docs might return
-    res.rows = res.rows.filter(function (row) {
-      return !/^_design\//.test(row.id);
+    .then(function (res) {
+      // filter out any design docs that _all_docs might return
+      res.rows = res.rows.filter(function (row) {
+        return !/^_design\//.test(row.id);
+      });
+      // put back original limit
+      if (opts.original_limit) {
+        opts.limit = opts.original_limit;
+      }
+      // enforce the rows to respect the given limit
+      res.rows = res.rows.slice(0, opts.limit);
+      return res;
     });
-    return res;
-  });
 }
 
 function find$1(db, requestDef, explain) {
@@ -19770,14 +19492,16 @@ function find$1(db, requestDef, explain) {
     db.constructor.emit('debug', ['find', 'planning query', requestDef]);
     var queryPlan = planQuery(requestDef, getIndexesRes.indexes);
     db.constructor.emit('debug', ['find', 'query plan', queryPlan]);
-
+    
     var indexToUse = queryPlan.index;
-
+    
     validateSort(requestDef, indexToUse);
 
     var opts = assign$1({
       include_docs: true,
-      reduce: false
+      reduce: false,
+      // Add amount of index for doAllDocs to use (related to issue #7810)
+      indexes_count: getIndexesRes.total_rows, 
     }, queryPlan.queryOpts);
 
     if ('startkey' in opts && 'endkey' in opts &&
@@ -19842,7 +19566,7 @@ function find$1(db, requestDef, explain) {
       };
 
       if (indexToUse.defaultUsed) {
-        resp.warning = 'no matching index found, create an index to optimize query time';
+        resp.warning = 'No matching index found, create an index to optimize query time.';
       }
 
       return resp;
@@ -19973,12 +19697,12 @@ index_browser_es_plugin.deleteIndex = toPromise(function (indexDef, callback) {
   deleteIndex$$1(this, indexDef, callback);
 });
 
-/* harmony default export */ var pouchdb_find_lib_index_browser_es = (index_browser_es_plugin);
+/* harmony default export */ var lib_index_browser_es = (index_browser_es_plugin);
 
 // CONCATENATED MODULE: ./src/Storage.js
 
 
-index_browser_es["a" /* default */].plugin(pouchdb_find_lib_index_browser_es);
+index_browser_es["a" /* default */].plugin(lib_index_browser_es);
 function Storage_db(name, options) {
   return new index_browser_es["a" /* default */](name, options);
 }
