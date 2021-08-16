@@ -21,7 +21,7 @@ export default (options = {}) => {
 
     const DEFAULT_DRIVER = vuex => ({
         initialize() {
-            promise(this.state).then(state => {
+            return promise(this.state).then(state => {
                 save(key, deepExtend(vuex.state, state)).then(state => {
                     vuex.watch(this.watch, this.set, {
                         deep: true
@@ -38,9 +38,7 @@ export default (options = {}) => {
             save(key, value);
         },
         state() {
-            return get(key).then(null, e => {
-                return null;
-            });
+            return get(key).then(null, e => null);
         },
         resetStateToDefault() {
             //
@@ -49,9 +47,10 @@ export default (options = {}) => {
     
     return vuex => {
         const driver = Object.assign(
-            value(DEFAULT_DRIVER, vuex), value(options.driver, vuex)
+            value(DEFAULT_DRIVER, vuex),
+            value(options.driver, vuex)
         );
 
-        driver.initialize();
+        driver.initialize().then(options.initialized);
     };
 };
