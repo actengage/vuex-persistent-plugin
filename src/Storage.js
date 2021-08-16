@@ -50,7 +50,7 @@ export function isJson(data) {
     try {
         return typeof JSON.parse(JSON.stringify(data)) === 'object';
     }
-    catch (e) {
+    catch(e) {
         return false;
     }
 }
