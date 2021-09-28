@@ -1,6 +1,6 @@
 {
   "name": "vuex-persistent-plugin",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "module": "./src/index.js",
   "scripts": {
     "commit": "git add -A && git commit -m 'Pre-release commit';",
