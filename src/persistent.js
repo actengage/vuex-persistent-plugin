@@ -20,25 +20,27 @@ export default (options = {}) => {
     const key = options.key || 'config';
 
     const DEFAULT_DRIVER = vuex => ({
-        initialize() {
-            return promise(this.state).then(state => {
-                save(key, deepExtend(vuex.state, state)).then(state => {
-                    vuex.watch(this.watch, this.set, {
-                        deep: true
-                    });
-        
-                    vuex.replaceState(state);
-                });
+        async initialize() {
+            const state = await promise(this.state);
+
+            await save(key, deepExtend(vuex.state, state));
+            
+            vuex.watch(this.watch, this.set, {
+                deep: true
             });
+
+            vuex.replaceState(state);
+            
+            return vuex.state;
         },
         watch(state) {
             return state;
         },
-        set(value) {
-            save(key, value);
+        async set(value) {
+            await save(key, value);
         },
-        state() {
-            return get(key).then(null, e => null);
+        async state() {
+            return await get(key);
         },
         resetStateToDefault() {
             //
