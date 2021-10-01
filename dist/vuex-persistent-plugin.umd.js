@@ -19898,44 +19898,6 @@ function save(doc, data, ...args) {
     }).then(resolve, reject);
   });
 }
-/*
-export function retryUntilWritten(name, saveData, options, fn) {
-    if(options instanceof Function) {
-        fn = options;
-    }
-
-    if(typeof options !== 'object') {
-        options = {};
-    }
-
-    if(!saveData._id && saveData.id) {
-        saveData._id = saveData.id.toString();
-    }
-
-    function write(data) {
-        return db(name).put(saveData).catch(err => {
-            if (err.status === 409) {
-                return retryUntilWritten(name, saveData, options, fn);
-            }
-            else {
-                return db(name).put(saveData);
-            }
-        });
-    }
-
-    return db(name)
-        .get(saveData._id, options)
-        .then(currentDoc => {
-            saveData._rev = currentDoc._rev;
-            saveData = fn instanceof Function ? fn(saveData, currentDoc) : saveData;
-
-            return write(saveData);
-        }, e => {
-            return write(saveData);
-        });
-}
-*/
-
 function findCacheSelector(key) {
   return {
     key,
@@ -19953,7 +19915,11 @@ function findCacheSelector(key) {
     }]
   };
 }
-function purge(key, ...args) {
+async function purge(key, ...args) {
+  if (Array.isArray(key)) {
+    key.forEach(async key => await remove(key, ...args));
+  }
+
   return remove(key, ...args);
 }
 function retryUntilSucceeds(method, ...args) {
