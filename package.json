@@ -15,7 +15,7 @@
     "release": "npm run commit; npm publish; git push --follow-tags;"
   },
   "dependencies": {
-    "deep-extend": "^0.6.0",
+    "lodash.debounce": "^4.0.8",
     "pouchdb": "^7.2.1",
     "pouchdb-find": "^7.2.1"
   },
@@ -35,8 +35,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^7.4.1",
-    "node-sass": "^5.0.0",
-    "sass-loader": "^10.1.1",
     "vue": "^2.6.11",
     "vue-template-compiler": "^2.6.11",
     "vuex": "^3.1.3",

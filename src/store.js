@@ -7,8 +7,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
 
     state: {
-        items: [],
-        test: 123,
         first: null,
         last: null
     },

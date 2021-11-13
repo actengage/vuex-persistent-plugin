@@ -1,58 +1,40 @@
-import deepExtend from 'deep-extend';
-import { get, save } from './Storage';
+import debounce from 'lodash.debounce';
+import { get, init, save } from './Storage';
 
-function value(val, ...args) {
-    return typeof val === 'function' ? val(...args) : val;
-}
-
-function promise(val, ...args) {
-    val = value(val, ...args);
-
-    if(val instanceof Promise) {
-        return val;
-    }
-
-    return Promise.resolve(val);
-}
-
-// TODO: Create a file for an encryption when app first launches...
 export default (options = {}) => {
-    const key = options.key || 'config';
+    const key = options.key || 'vuex';
 
-    const DEFAULT_DRIVER = vuex => ({
-        async initialize() {
-            const state = await promise(this.state);
+    const db = init(options.database || 'config');
 
-            await save(key, deepExtend(vuex.state, state));
-            
-            vuex.watch(this.watch, this.set, {
-                deep: true
-            });
+    const debounced = debounce((fn, ...args) => {
+        fn(...args);
+    }, options.wait || 250);
 
-            vuex.replaceState(state);
-            
-            return vuex.state;
-        },
-        watch(state) {
-            return state;
-        },
-        async set(value) {
-            await save(key, value);
-        },
-        async state() {
-            return await get(key);
-        },
-        resetStateToDefault() {
+    return async(vuex) => {
+        await db.compact();
+    
+        try {
+            Object.assign(vuex.state, await get(key));
+        }
+        catch(e) {
             //
         }
-    });
-    
-    return vuex => {
-        const driver = Object.assign(
-            value(DEFAULT_DRIVER, vuex),
-            value(options.driver, vuex)
-        );
 
-        driver.initialize().then(options.initialized);
+        /**
+         * @todo Save each state key as its own config document.
+         * @todo Diff the changed state and previous state, and save the
+         *       key/values that changed.
+         */
+        vuex.watch(state => state, async(state) => {
+            const doc = Object.keys(state).reduce((carry, key) => {
+                return Object.assign(carry, {
+                    [key]: state[key]
+                });
+            }, {});
+            
+            debounced(() => save(key, doc));
+        }, {
+            deep: true
+        });
     };
 };
