@@ -15,6 +15,7 @@
     "release": "npm run commit; npm publish; git push --follow-tags;"
   },
   "dependencies": {
+    "deep-object-diff": "^1.1.0",
     "lodash.debounce": "^4.0.8",
     "pouchdb": "^7.2.1",
     "pouchdb-find": "^7.2.1"
