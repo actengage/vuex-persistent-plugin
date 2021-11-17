@@ -15,6 +15,22 @@ PouchDB.plugin(PoucheConfig);
 export let db;
 
 /**
+ * Throw an error if the database has not been initialize.
+ * 
+ * @throws Will throw an error if the database has not been initialized.
+ * @returns {boolean}
+ */
+function initialized() {
+    if(!db) {
+        throw new Error(
+            'You must initialize with init() before accessing the database.'
+        );
+    }
+
+    return true;
+}
+
+/**
  * Instantiate a database and set it to the global variable.
  * 
  * @param {string} name
@@ -22,7 +38,7 @@ export let db;
  * @returns {PouchDB}
  */
 export function init(name, options) {
-    return db = new PouchDB(name, options);
+    return db|| (db = new PouchDB(name, options));
 }
 
 /**
@@ -31,7 +47,7 @@ export function init(name, options) {
  * @returns {Promise}
  */
 export async function createIndex() {
-    return {
+    return initialized() && {
         cache: await db.createCacheIndex(),
         config: await db.createConfigIndex()
     };
@@ -43,7 +59,7 @@ export async function createIndex() {
  * @returns {Promise}
  */
 export async function createCacheIndex() {
-    return await db.createCacheIndex();
+    return initialized() && await db.createCacheIndex();
 }
 
 /**
@@ -52,7 +68,7 @@ export async function createCacheIndex() {
  * @returns {Promise}
  */
 export async function createConfigIndex() {
-    return await db.createConfigIndex();
+    return initialized() && await db.createConfigIndex();
 }
 
 /**
@@ -70,7 +86,7 @@ export async function createConfigIndex() {
  * @returns {Promise}
  */
 export async function cache(...args) {
-    return await db.cache(...args);
+    return initialized() && await db.cache(...args);
 }
 
 /**
@@ -86,7 +102,7 @@ export async function cache(...args) {
  * @returns {Promise}
  */
 export async function config(...args) {
-    return await db.config(...args);
+    return initialized() && await db.config(...args);
 }
 
 /**
@@ -99,7 +115,7 @@ export async function config(...args) {
  * @returns {Promise}
  */
 export async function purge(...args) {
-    return await db.purge(...args);
+    return initialized() && await db.purge(...args);
 }
 
 /**
@@ -109,7 +125,7 @@ export async function purge(...args) {
  * @returns {Promise}
  */
 export async function removeCache(...args) {
-    return await db.removeCache(...args);
+    return initialized() && await db.removeCache(...args);
 }
 
 /**
@@ -119,5 +135,5 @@ export async function removeCache(...args) {
  * @returns {Promise}
  */
 export async function removeConfig(...args) {
-    return await db.removeConfig(...args);
+    return initialized() && await db.removeConfig(...args);
 }

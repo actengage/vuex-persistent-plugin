@@ -1,3 +1,4 @@
+
 import persistent from './persistent';
 
 export * from './Storage';

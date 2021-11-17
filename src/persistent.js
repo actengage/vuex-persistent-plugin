@@ -4,7 +4,9 @@ import { init } from './Storage';
 
 export default (options = {}) => {
     // Initialize the database.
-    const db = init(options.database || 'vuex');
+    const db = init(
+        options.database || process.env.VUE_APP_DATABASE_NAME || 'vuex'
+    );
 
     // Create the debouncer so we can throttle the changes to the db.
     const debounced = debounce((fn, ...args) => {
@@ -15,7 +17,7 @@ export default (options = {}) => {
     return async(vuex) => {
         // Compact the database to reduce the size and remove some unnecessary
         // revisions.
-        await db.compact();
+        // await db.compact();
     
         // Loop through the vuex.state keys and get the values from the db.
         for(const key of Object.keys(vuex.state)) {
@@ -44,5 +46,9 @@ export default (options = {}) => {
             // Use deep so we can track changes within nested objects/arrays.
             deep: true
         });
+
+        if(typeof options.initialized === 'function') {
+            options.initialized(vuex);
+        }
     };
 };
