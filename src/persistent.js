@@ -3,10 +3,15 @@ import debounce from 'lodash.debounce';
 import { init } from './Storage';
 
 export default (options = {}) => {
+    // Get the database name from the options or process.env
+    const name = options.database || process.env.VUE_APP_DATABASE_NAME;
+
+    if(!name) {
+        throw new Error('The database name must be defined.');
+    }
+
     // Initialize the database.
-    const db = init(
-        options.database || process.env.VUE_APP_DATABASE_NAME || 'vuex'
-    );
+    const db = init(name);
 
     // Create the debouncer so we can throttle the changes to the db.
     const debounced = debounce((fn, ...args) => {
@@ -19,10 +24,14 @@ export default (options = {}) => {
         // revisions.
         // await db.compact();
     
-        // Loop through the vuex.state keys and get the values from the db.
+        // Loop through the vuex.state keys and get the saved values.
         for(const key of Object.keys(vuex.state)) {
-            vuex.state[key] = await db.config(key);
-        }                
+            const value = await db.config(key);
+
+            if(value !== undefined) {
+                vuex.state[key] = JSON.parse(JSON.stringify(value));
+            }
+        }
 
         // Define the previous state by converting it to a plain object.
         // This allows us to deef diff the objects later and only save the
@@ -35,7 +44,8 @@ export default (options = {}) => {
             const difference = diff(prevState, state);
 
             // Loop through the differences and save the key/value in the db.
-            for(const [key, value] of Object.entries(difference)) {
+            for(let [key, value] of Object.entries(difference)) {
+                // Set the config key/value pair.
                 await db.config(key, value);
             }                
 

@@ -123,7 +123,13 @@ export default {
         
         // Evaluate data as a promise to extract the literal value.
         // Data can be passed as a Promise, function, or literal value.
-        const $value = await promise(data);
+        let $value = await promise(data);
+
+        // The value must be stringified and parsed to remove observers
+        // and other invalid JSON that can't be saved in the db.
+        if($value !== undefined) {
+            $value = JSON.parse(JSON.stringify($value));
+        }
 
         // Get the first revision from the array of docs so we can update the
         // existing doc, if it exists.
