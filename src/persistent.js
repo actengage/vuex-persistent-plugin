@@ -1,4 +1,4 @@
-import { diff } from 'deep-object-diff';
+import { diff, detailedDiff } from 'deep-object-diff';
 import debounce from 'lodash.debounce';
 import { init } from './Storage';
 
@@ -44,14 +44,14 @@ export default (options = {}) => {
             const difference = diff(prevState, state);
 
             // Loop through the differences and save the key/value in the db.
-            for(let [key, value] of Object.entries(difference)) {
+            for(let key of Object.keys(difference)) {
                 // Set the config key/value pair.
-                await db.config(key, value);
+                await db.config(key, state[key]);
             }                
 
             // Set the previous back to a plain object so we can compare again
             // the next time the debouncer callback is fired.
-            prevState = JSON.parse(JSON.stringify(vuex.state));
+            // prevState = JSON.parse(JSON.stringify(vuex.state));
         }), {
             // Use deep so we can track changes within nested objects/arrays.
             deep: true
