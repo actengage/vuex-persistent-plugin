@@ -21,8 +21,8 @@
     "pouchdb-find": "^7.2.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.2.3",
-    "@vue/cli-service": "^4.2.3",
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "babel-eslint": "^10.1.0",
     "core-js": "^3.16.1",
     "eslint": "^7.9.0",
